@@ -135,7 +135,7 @@ int main()
 	Shader ourShader(RESOURCES_PATH"modelLoading.vert", RESOURCES_PATH"modelLoading.frag");
 	Shader lightCubeShader(RESOURCES_PATH"LightCubeShader.vert", RESOURCES_PATH"LightCubeShader.frag");
 
-	Model ourModel(RESOURCES_PATH"objects/monke/waterMonke.obj");
+	Model ourModel(RESOURCES_PATH"objects/backpack/backpack.obj");
 
 	// draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
