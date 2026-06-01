@@ -40,6 +40,19 @@ struct PointLight
 #define NR_POINT_LIGHTS 2
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
+struct SpotLight
+{
+	vec3 position;
+	vec3 direction;
+	float innerCutoff;
+	float outerCutoff;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+uniform SpotLight spotLight;
+
 vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 lightDir = normalize(-light.direction);
@@ -85,6 +98,32 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	return (ambient + diffuse + specular);
 }
 
+vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+	vec3 lightDir = normalize(light.position - fragPos);
+
+	float epsilon = light.innerCutoff - light.outerCutoff;
+	float theta = max(dot(lightDir, normalize(-light.direction)), 0.0);
+	float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0);
+
+	//diffuse
+	float diff = max(dot(normal, lightDir) , 0.0);
+
+	//specular 
+	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+
+	//combine results
+	vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse1, TexCoords));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse1, TexCoords));
+	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, TexCoords));
+	
+	diffuse *= intensity;
+	specular *= intensity;
+
+	return vec3(ambient + diffuse + specular);
+}
+
 void main()
 {    
 	vec3 normal = normalize(Normal);
@@ -94,6 +133,8 @@ void main()
 
 	for (int i = 0; i < NR_POINT_LIGHTS; i++)
 		result += CalculatePointLight(pointLights[i], normal, FragPos, viewDir);
+
+	result += CalculateSpotLight(spotLight, normal, FragPos, viewDir);
 
 	FragColor = vec4(result, 1.0);
 }

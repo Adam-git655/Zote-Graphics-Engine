@@ -22,8 +22,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void setMouseCaptured(GLFWwindow* window, bool captured);
 
 //settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -135,7 +135,7 @@ int main()
 	Shader ourShader(RESOURCES_PATH"modelLoading.vert", RESOURCES_PATH"modelLoading.frag");
 	Shader lightCubeShader(RESOURCES_PATH"LightCubeShader.vert", RESOURCES_PATH"LightCubeShader.frag");
 
-	Model ourModel(RESOURCES_PATH"objects/backpack/backpack.obj");
+	Model ourModel(RESOURCES_PATH"objects/monke/waterMonke.obj");
 
 	// draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -185,10 +185,18 @@ int main()
 		glm::vec3(1.0f, 1.0f, 1.0f),
 		glm::vec3(1.0f, 1.0f, 1.0f)
 	};
+
+	//SpotLight vars
+	bool spotLightActive = true;
+	float spotLightInnerCutoff = glm::cos(glm::radians(12.5f));
+	float spotLightOuterCutoff = glm::cos(glm::radians(17.5f));
+	glm::vec3 spotLightAmbient = { 0.1f,0.1f, 0.1f };
+	glm::vec3 spotLightDiffuse = { 0.6f, 0.6f, 0.6f };
+	glm::vec3 spotLightSpecular = { 1.0f, 1.0f, 1.0f };
 #pragma endregion
 
 
-	
+
 	//Render Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -249,6 +257,23 @@ int main()
 			}
 		}
 
+		ourShader.setVec3("spotLight.position", camera.Position);
+		if (spotLightActive)
+		{
+			ourShader.setVec3("spotLight.direction", camera.Front);
+			ourShader.setVec3("spotLight.ambient", spotLightAmbient);
+			ourShader.setVec3("spotLight.diffuse", spotLightDiffuse);
+			ourShader.setVec3("spotLight.specular", spotLightSpecular);
+			ourShader.setFloat("spotLight.innerCutoff", spotLightInnerCutoff);
+			ourShader.setFloat("spotLight.outerCutoff", spotLightOuterCutoff);
+		}
+		else
+		{
+			ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+			ourShader.setVec3("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
+			ourShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
+		}
+
 		//projection transfromation
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT,
@@ -298,6 +323,7 @@ int main()
 			ImGui::ColorEdit3("diffuse", &dirLightdiffuse[0]);
 			ImGui::ColorEdit3("specualar", &dirLightspecular[0]);
 		}
+
 		for (int i = 0; i < NR_POINT_LIGHTS; i++)
 		{
 			std::string name = "Point Light" + std::to_string(i);
@@ -317,6 +343,16 @@ int main()
 				ImGui::ColorEdit3(diffuseId.c_str(), &pointLightDiffuses[i][0]);
 				ImGui::ColorEdit3(specularId.c_str(), &pointLightSpeculars[i][0]);
 			}
+		}
+
+		if (ImGui::CollapsingHeader("Spot Light (Flashlight)"))
+		{
+			ImGui::Checkbox("active##spot", &spotLightActive);
+			ImGui::SliderFloat("inner radius##spot", &spotLightInnerCutoff, spotLightOuterCutoff, 1.0f);
+			ImGui::SliderFloat("outer radius##spot", &spotLightOuterCutoff, 0.0f, spotLightInnerCutoff);
+			ImGui::ColorEdit3("ambient##spot", &spotLightAmbient[0]);
+			ImGui::ColorEdit3("diffuse##spot", &spotLightDiffuse[0]);
+			ImGui::ColorEdit3("specular##spot", &spotLightSpecular[0]);
 		}
 
 		ImGui::End();
