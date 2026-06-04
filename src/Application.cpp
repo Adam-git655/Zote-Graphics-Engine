@@ -65,7 +65,7 @@ void Application::Init()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	//setup scene
-	scene.Setup(*mainShader, *lightCubeShader);
+	scene.Setup(*mainShader, *lightCubeShader, lighting);
 }
 
 void Application::Run()

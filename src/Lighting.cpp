@@ -45,12 +45,6 @@ void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, 
 			mainShader.setVec3("pointLights[" + index + "].diffuse", 0.0f, 0.0f, 0.0f);
 			mainShader.setVec3("pointLights[" + index + "].specular", 0.0f, 0.0f, 0.0f);
 		}
-
-		//set colour param of point light cube
-		if (pointLightsActive[i])
-			lightCubeShader.setVec3("lightSourceCubeColor", pointLightSourceCubeColors[i]);
-		else
-			lightCubeShader.setVec3("lightSourceCubeColor", glm::vec3(0.0f, 0.0f, 0.0f)); //black right now
 	}
 
 	mainShader.setVec3("spotLight.position", camera.Position);
@@ -68,6 +62,17 @@ void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, 
 		mainShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
 		mainShader.setVec3("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
 		mainShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
+	}
+
+	lightCubeShader.use();
+
+	for (int i = 0; i < NR_POINT_LIGHTS; i++)
+	{
+		//set colour param of point light cube
+		if (pointLightsActive[i])
+			lightCubeShader.setVec3("lightSourceCubeColor", pointLightSourceCubeColors[i]);
+		else
+			lightCubeShader.setVec3("lightSourceCubeColor", glm::vec3(0.0f, 0.0f, 0.0f)); //black right now
 	}
 }
 

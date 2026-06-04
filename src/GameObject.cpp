@@ -6,6 +6,13 @@ GameObject::GameObject(const std::string& name, Shader* shader, Model* model)
 
 }
 
+GameObject::GameObject(const std::string& name, Shader* shader, Mesh* primitive)
+	:name(name), shader(shader), primitive(primitive)
+{
+
+}
+
+
 void GameObject::Draw() const
 {
 	if (!shader) return;
@@ -15,8 +22,8 @@ void GameObject::Draw() const
 
 	if (model)
 		model->Draw(*shader);
-	else
-		return;
+	if (primitive)
+		primitive->Draw(*shader);
 }
 
 glm::mat4 Transform::getModelMatrix() const

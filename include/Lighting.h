@@ -15,6 +15,21 @@ public:
 	void SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, Camera& camera);
 	void SetImGuiLightingParameters();
 
+	static constexpr int NR_POINT_LIGHTS = 2;
+
+	std::array<bool, NR_POINT_LIGHTS> pointLightsActive = {
+		true,
+		true
+	};
+	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightPositions = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f)
+	};
+	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightSourceCubeColors = {
+		glm::vec3(1.0f, 1.0f, 1.0f),
+		glm::vec3(1.0f, 1.0f, 1.0f)
+	};
+
 private:
 	//Dirlight vars
 	bool dirLightActive = true;
@@ -24,16 +39,6 @@ private:
 	glm::vec3 dirLightspecular = { 0.5f, 0.5f, 0.5f };
 
 	//PointLight vars
-	static constexpr int NR_POINT_LIGHTS = 2;
-
-	std::array<bool, NR_POINT_LIGHTS> pointLightsActive = { 
-		true,
-		true 
-	};
-	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightPositions = {
-		glm::vec3(0.7f,  0.2f,  2.0f), 
-		glm::vec3(2.3f, -3.3f, -4.0f) 
-	};
 	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightAmbients = {
 		glm::vec3(0.1f, 0.1f, 0.1f),
 		glm::vec3(0.1f, 0.1f, 0.1f)
@@ -43,10 +48,6 @@ private:
 		glm::vec3(0.8f, 0.8f, 0.8f)
 	};
 	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightSpeculars = {
-		glm::vec3(1.0f, 1.0f, 1.0f),
-		glm::vec3(1.0f, 1.0f, 1.0f)
-	};
-	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightSourceCubeColors = {
 		glm::vec3(1.0f, 1.0f, 1.0f),
 		glm::vec3(1.0f, 1.0f, 1.0f)
 	};

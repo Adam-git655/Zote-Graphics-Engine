@@ -4,15 +4,35 @@ Scene::Scene()
 {
 }
 
-void Scene::Setup(Shader& mainShader, Shader& lightCubeShader)
+void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting)
 {
-	models.reserve(10);
+	models.reserve(2);
+	meshes.reserve(lighting.NR_POINT_LIGHTS);
 
+	//add backpack model
 	models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
-	objects.push_back(std::make_unique<GameObject>("backpack", &mainShader, &models.back()));
+	std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
+	backpackObj->transform.position.x = -2;
+	objects.push_back(std::move(backpackObj));
 
+	//add water monke model
 	models.emplace_back(RESOURCES_PATH"objects/monke/waterMonke.obj");
-	objects.push_back(std::make_unique<GameObject>("waterMonke", &mainShader, &models.back()));
+	std::unique_ptr<GameObject> waterMonkeObj = std::make_unique<GameObject>("waterMonke", &mainShader, &models.back());
+	waterMonkeObj->transform.position.x = 2;
+	objects.push_back(std::move(waterMonkeObj));
+
+	//add light cubes
+	for (int i = 0; i < lighting.NR_POINT_LIGHTS; ++i)
+	{
+		meshes.emplace_back(Primitives::createCube());
+		std::unique_ptr<GameObject> lightObj = std::make_unique<GameObject>("point_light" + std::to_string(i + 1), &lightCubeShader, &meshes.back());
+
+		//set position of light cubes
+		lightObj->transform.position = lighting.pointLightPositions[i];
+		lightObj->transform.scale = glm::vec3(0.2f);
+
+		objects.push_back(std::move(lightObj));
+	}
 }
 
 void Scene::Draw(Camera& camera, glm::mat4 projection)
@@ -27,15 +47,6 @@ void Scene::Draw(Camera& camera, glm::mat4 projection)
 		//set view matrix
 		glm::mat4 view = camera.GetViewMatrix();
 		obj->shader->setMat4("view", view);
-
-		if (obj->name == "backpack")
-		{
-			obj->transform.position.x = -2;
-		}
-		else if (obj->name == "waterMonke")
-		{
-			obj->transform.position.x = 2;
-		}
 
 		obj->Draw();
 	}
