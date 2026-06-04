@@ -93,7 +93,7 @@ void Application::Run()
 			0.1f, 100.0f);
 
 		//render scene
-		scene.Draw(camera, projection);
+		scene.Draw(camera, projection, lighting);
 
 		//draw ui using imgui
 		RenderUI();

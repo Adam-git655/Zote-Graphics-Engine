@@ -26,17 +26,18 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	{
 		meshes.emplace_back(Primitives::createCube());
 		std::unique_ptr<GameObject> lightObj = std::make_unique<GameObject>("point_light" + std::to_string(i + 1), &lightCubeShader, &meshes.back());
+		lightObj->tag = "point_light";
 
-		//set position of light cubes
-		lightObj->transform.position = lighting.pointLightPositions[i];
+		//set scale of light cubes
 		lightObj->transform.scale = glm::vec3(0.2f);
 
 		objects.push_back(std::move(lightObj));
 	}
 }
 
-void Scene::Draw(Camera& camera, glm::mat4 projection)
+void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 {
+	int lightIndex = 0;
 	for (auto& obj : objects)
 	{
 		obj->shader->use();
@@ -47,6 +48,13 @@ void Scene::Draw(Camera& camera, glm::mat4 projection)
 		//set view matrix
 		glm::mat4 view = camera.GetViewMatrix();
 		obj->shader->setMat4("view", view);
+
+		if (obj->tag == "point_light")
+		{
+			obj->transform.position = lighting.pointLightPositions[lightIndex];
+			obj->color = lighting.pointLightSourceCubeColors[lightIndex];
+			lightIndex++;
+		}
 
 		obj->Draw();
 	}

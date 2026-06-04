@@ -19,6 +19,7 @@ void GameObject::Draw() const
 
 	shader->use();
 	shader->setMat4("model", transform.getModelMatrix());
+	shader->setVec3("lightSourceCubeColor", color);
 
 	if (model)
 		model->Draw(*shader);

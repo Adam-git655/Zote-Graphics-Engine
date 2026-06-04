@@ -11,7 +11,7 @@ class Scene
 public:
 	Scene();
 	void Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting);
-	void Draw(Camera& camera, glm::mat4 projection);
+	void Draw(Camera& camera, glm::mat4 projection, Lighting& lighting);
 
 private:
 	std::vector<std::unique_ptr<GameObject>> objects;

@@ -18,10 +18,12 @@ class GameObject
 {
 public:
 	std::string name = "GameObject";
+	std::string tag = "";
 	Transform transform;
 	Shader* shader = nullptr;
 	Model* model = nullptr;
 	Mesh* primitive = nullptr;
+	glm::vec3 color = glm::vec3(1.0f);
 
 	GameObject() = default;
 	GameObject(const std::string& name, Shader* shader, Model* model);
