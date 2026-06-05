@@ -53,9 +53,11 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 		{
 			obj->transform.position = lighting.pointLightPositions[lightIndex];
 			obj->color = lighting.pointLightSourceCubeColors[lightIndex];
+			obj->active = lighting.pointLightsActive[lightIndex];
 			lightIndex++;
 		}
 
-		obj->Draw();
+		if (obj->active)
+			obj->Draw();
 	}
 }

@@ -19,6 +19,7 @@ class GameObject
 public:
 	std::string name = "GameObject";
 	std::string tag = "";
+	bool active = true;
 	Transform transform;
 	Shader* shader = nullptr;
 	Model* model = nullptr;
