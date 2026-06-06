@@ -30,6 +30,13 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	groundObj->color = glm::vec3(0.5, 0.5, 0.5);
 	objects.push_back(std::move(groundObj));
 
+	//add cube mesh
+	meshes.emplace_back(Primitives::createCube());
+	std::unique_ptr<GameObject> cubeObj = std::make_unique<GameObject>("cube", &mainShader, &meshes.back());
+	cubeObj->transform.position = { 0.5, -1.4, 0.7 };
+	cubeObj->color = glm::vec3(1, 0, 0);
+	objects.push_back(std::move(cubeObj));
+
 	//add light cubes
 	for (int i = 0; i < lighting.NR_POINT_LIGHTS; ++i)
 	{
