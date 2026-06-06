@@ -7,7 +7,7 @@ Scene::Scene()
 void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting)
 {
 	models.reserve(2);
-	meshes.reserve(lighting.NR_POINT_LIGHTS);
+	meshes.reserve(10);
 
 	//add backpack model
 	models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
@@ -21,10 +21,19 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	waterMonkeObj->transform.position.x = 2;
 	objects.push_back(std::move(waterMonkeObj));
 
+	//add ground mesh
+	meshes.emplace_back(Primitives::createQuad());
+	std::unique_ptr<GameObject> groundObj = std::make_unique<GameObject>("ground", &mainShader, &meshes.back());
+	groundObj->transform.position.y = -2;
+	groundObj->transform.scale.x *= 10;
+	groundObj->transform.scale.z *= 10;
+	groundObj->color = glm::vec3(0.5, 0.5, 0.5);
+	objects.push_back(std::move(groundObj));
+
 	//add light cubes
 	for (int i = 0; i < lighting.NR_POINT_LIGHTS; ++i)
 	{
-		meshes.emplace_back(Primitives::createCube());
+		meshes.emplace_back(Primitives::createCubeUnlit());
 		std::unique_ptr<GameObject> lightObj = std::make_unique<GameObject>("point_light" + std::to_string(i + 1), &lightCubeShader, &meshes.back());
 		lightObj->tag = "point_light";
 

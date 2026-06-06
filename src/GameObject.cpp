@@ -22,9 +22,25 @@ void GameObject::Draw() const
 	shader->setVec3("lightSourceCubeColor", color);
 
 	if (model)
+	{
+		shader->setBool("useTexture", true);
 		model->Draw(*shader);
+	}
 	if (primitive)
+	{
+		if (primitive->textures.empty())
+		{
+			shader->setBool("useTexture", false);
+			shader->setVec3("colorTint", color);
+			shader->setFloat("shininess", shininess);
+		}
+		else
+		{
+			shader->setBool("useTexture", true);
+		}
+
 		primitive->Draw(*shader);
+	}
 }
 
 glm::mat4 Transform::getModelMatrix() const

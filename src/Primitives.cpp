@@ -153,6 +153,6 @@ Mesh Primitives::createQuad()
 	{
 		indices.emplace_back(quadIndices[i]);
 	}
-
+	
 	return Mesh(vertices, indices, {});
 }

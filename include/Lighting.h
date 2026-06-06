@@ -23,7 +23,7 @@ public:
 	};
 	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightPositions = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f)
+		glm::vec3(2.3f, -1.4f, -4.0f)
 	};
 	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightSourceCubeColors = {
 		glm::vec3(1.0f, 1.0f, 1.0f),
