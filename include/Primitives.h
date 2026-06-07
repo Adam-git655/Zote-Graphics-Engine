@@ -4,6 +4,6 @@
 namespace Primitives
 {
 	Mesh createCubeUnlit();
-	Mesh createCube();
-	Mesh createQuad();
+	Mesh createCube(std::string texturePath = "");
+	Mesh createQuad(std::string texturePath = "");
 }

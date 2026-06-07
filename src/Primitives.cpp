@@ -101,10 +101,11 @@ Mesh Primitives::createCubeUnlit()
 	return Mesh(vertices, indices, {});
 }
 
-Mesh Primitives::createCube()
+Mesh Primitives::createCube(std::string texturePath)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+	std::vector<Texture> textures;
 
 	//fill vertices
 	int additive = 0;
@@ -126,13 +127,26 @@ Mesh Primitives::createCube()
 		indices.emplace_back(cubeIndices[i]);
 	}
 
-	return Mesh(vertices, indices, {});
+	//add texture (if applicable)
+	if (texturePath != "")
+	{
+		Texture tex;
+		std::string directory = texturePath.substr(0, texturePath.find_last_of("/"));
+		std::string fileName = texturePath.substr(texturePath.find_last_of("/") + 1);
+		tex.id = TextureLoader::TextureFromFile(fileName.c_str(), directory);
+		tex.type = "texture_diffuse";
+		tex.path = texturePath;
+		textures.emplace_back(tex);
+	}
+
+	return Mesh(vertices, indices, textures);
 }
 
-Mesh Primitives::createQuad()
+Mesh Primitives::createQuad(std::string texturePath)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+	std::vector<Texture> textures;
 
 	//fill vertices
 	int additive = 0;
@@ -153,6 +167,18 @@ Mesh Primitives::createQuad()
 	{
 		indices.emplace_back(quadIndices[i]);
 	}
+
+	//add texture (if applicable)
+	if (texturePath != "")
+	{
+		Texture tex;
+		std::string directory = texturePath.substr(0, texturePath.find_last_of("/"));
+		std::string fileName = texturePath.substr(texturePath.find_last_of("/") + 1);
+		tex.id = TextureLoader::TextureFromFile(fileName.c_str(), directory);
+		tex.type = "texture_diffuse";
+		tex.path = texturePath;
+		textures.emplace_back(tex);
+	}
 	
-	return Mesh(vertices, indices, {});
+	return Mesh(vertices, indices, textures);
 }
