@@ -5,3 +5,9 @@ build/
 .idea/
 CMakeSettings.json
 Makefile
+assets/
+resources/
+*.png
+*.jpg
+*.fbx
+*.obj
