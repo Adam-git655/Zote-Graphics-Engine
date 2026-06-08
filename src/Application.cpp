@@ -60,6 +60,10 @@ void Application::Init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	//enable face culling
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 	//setup imgui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

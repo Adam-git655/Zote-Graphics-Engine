@@ -125,6 +125,7 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 		sortedWindows[dist] = obj.get();		
 	}
 
+	glDisable(GL_CULL_FACE);
 	//render in reverse order (far->near)
 	for (std::map<float, GameObject*>::reverse_iterator it = sortedWindows.rbegin(); it != sortedWindows.rend(); ++it)
 	{
@@ -136,4 +137,5 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 
 		it->second->Draw();
 	}
+	glEnable(GL_CULL_FACE);
 }
