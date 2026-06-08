@@ -134,15 +134,15 @@ void main()
 	vec3 normal = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
 
-	vec3 albedo = useTexture ? texture(material.texture_diffuse1, TexCoords).rgb : colorTint;
+	vec4 albedo = useTexture ? texture(material.texture_diffuse1, TexCoords) : vec4(colorTint, 1.0f);
 	vec3 specularColor = useTexture ? texture(material.texture_specular1, TexCoords).rgb : vec3(shininess);
     
-	vec3 result = CalculateDirLight(dirLight, normal, viewDir, albedo, specularColor);
+	vec3 result = CalculateDirLight(dirLight, normal, viewDir, albedo.rgb, specularColor);
 
 	for (int i = 0; i < NR_POINT_LIGHTS; i++)
-		result += CalculatePointLight(pointLights[i], normal, FragPos, viewDir, albedo, specularColor);
+		result += CalculatePointLight(pointLights[i], normal, FragPos, viewDir, albedo.rgb, specularColor);
 
-	result += CalculateSpotLight(spotLight, normal, FragPos, viewDir, albedo, specularColor);
+	result += CalculateSpotLight(spotLight, normal, FragPos, viewDir, albedo.rgb, specularColor);
 
-	FragColor = vec4(result, 1.0);
+	FragColor = vec4(result, albedo.a);
 }

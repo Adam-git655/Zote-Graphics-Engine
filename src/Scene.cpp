@@ -4,22 +4,22 @@ Scene::Scene()
 {
 }
 
-void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting)
+void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera)
 {
 	models.reserve(2);
 	meshes.reserve(10);
 
-	//add backpack model
-	models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
-	std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
-	backpackObj->transform.position.x = -2;
-	objects.push_back(std::move(backpackObj));
+	////add backpack model
+	//models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
+	//std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
+	//backpackObj->transform.position.x = -2;
+	//objects.push_back(std::move(backpackObj));
 
-	//add water monke model
-	models.emplace_back(RESOURCES_PATH"objects/monke/waterMonke.obj");
-	std::unique_ptr<GameObject> waterMonkeObj = std::make_unique<GameObject>("waterMonke", &mainShader, &models.back());
-	waterMonkeObj->transform.position.x = 2;
-	objects.push_back(std::move(waterMonkeObj));
+	////add water monke model
+	//models.emplace_back(RESOURCES_PATH"objects/monke/waterMonke.obj");
+	//std::unique_ptr<GameObject> waterMonkeObj = std::make_unique<GameObject>("waterMonke", &mainShader, &models.back());
+	//waterMonkeObj->transform.position.x = 2;
+	//objects.push_back(std::move(waterMonkeObj));
 
 	//add ground mesh
 	meshes.emplace_back(Primitives::createQuad());
@@ -33,9 +33,27 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	//add cube mesh
 	meshes.emplace_back(Primitives::createCube());
 	std::unique_ptr<GameObject> cubeObj = std::make_unique<GameObject>("cube", &mainShader, &meshes.back());
-	cubeObj->transform.position = { 0.5, -1.4, 0.7 };
-	cubeObj->color = glm::vec3(1, 0, 0);
+	cubeObj->transform.position = { 1.0, -1.4, 0.0 };
+	cubeObj->color = glm::vec3(0, 1, 0);
 	objects.push_back(std::move(cubeObj));
+
+	//add windows
+	std::vector<glm::vec3> windows;
+	windows.push_back(glm::vec3(-1.5f, -1.4f, -0.48f));
+	windows.push_back(glm::vec3(1.5f, -1.4f, 0.51f));
+	windows.push_back(glm::vec3(0.0f, -1.4f, 0.7f));
+	windows.push_back(glm::vec3(-0.3f, -1.4f, -2.3f));
+	windows.push_back(glm::vec3(0.5f, -1.4f, -0.6f));
+
+	for (int i = 0; i < windows.size(); ++i)
+	{
+		meshes.emplace_back(Primitives::createQuad(RESOURCES_PATH "textures/transparent_window.png"));
+		std::unique_ptr<GameObject> windowObj = std::make_unique<GameObject>("window", &mainShader, &meshes.back());
+		windowObj->transform.position = windows[i];
+		windowObj->transform.rotation.x = -90;
+		windowObj->transparent = true;
+		objects.push_back(std::move(windowObj));
+	}
 
 	//add light cubes
 	for (int i = 0; i < lighting.NR_POINT_LIGHTS; ++i)
@@ -53,9 +71,25 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 
 void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 {
+	//update light cube properties
 	int lightIndex = 0;
 	for (auto& obj : objects)
 	{
+		if (obj->tag == "point_light")
+		{
+			obj->transform.position = lighting.pointLightPositions[lightIndex];
+			obj->color = lighting.pointLightSourceCubeColors[lightIndex];
+			obj->active = lighting.pointLightsActive[lightIndex];
+			lightIndex++;
+		}
+	}
+
+	//render opaque objects
+	for (auto& obj : objects)
+	{
+		if (!obj->active || obj->transparent)
+			continue;
+
 		obj->shader->use();
 
 		//set projection matrix
@@ -65,15 +99,32 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 		glm::mat4 view = camera.GetViewMatrix();
 		obj->shader->setMat4("view", view);
 
-		if (obj->tag == "point_light")
-		{
-			obj->transform.position = lighting.pointLightPositions[lightIndex];
-			obj->color = lighting.pointLightSourceCubeColors[lightIndex];
-			obj->active = lighting.pointLightsActive[lightIndex];
-			lightIndex++;
-		}
+		obj->Draw();
+	}
 
-		if (obj->active)
-			obj->Draw();
+	//render transparent objects
+	
+	//sort first based on distance to camera (near->far in map)
+	std::map<float, GameObject*> sortedWindows;
+
+	for (auto& obj : objects)
+	{
+		if (!obj->active || !obj->transparent)
+			continue;
+
+		float dist = glm::length(camera.Position - obj->transform.position);
+		sortedWindows[dist] = obj.get();		
+	}
+
+	//render in reverse order (far->near)
+	for (std::map<float, GameObject*>::reverse_iterator it = sortedWindows.rbegin(); it != sortedWindows.rend(); ++it)
+	{
+		it->second->shader->use();
+		it->second->shader->setMat4("projection", projection);
+
+		glm::mat4 view = camera.GetViewMatrix();
+		it->second->shader->setMat4("view", view);
+
+		it->second->Draw();
 	}
 }

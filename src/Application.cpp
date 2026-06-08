@@ -56,6 +56,10 @@ void Application::Init()
 	//flip textures
 	stbi_set_flip_vertically_on_load(true);
 
+	//enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	//setup imgui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -65,7 +69,7 @@ void Application::Init()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	//setup scene
-	scene.Setup(*mainShader, *lightCubeShader, lighting);
+	scene.Setup(*mainShader, *lightCubeShader, lighting, camera);
 }
 
 void Application::Run()

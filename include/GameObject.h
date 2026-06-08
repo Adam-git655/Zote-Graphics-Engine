@@ -26,6 +26,7 @@ public:
 	Mesh* primitive = nullptr;
 	glm::vec3 color = glm::vec3(1.0f);
 	float shininess = 1.0f;
+	bool transparent = false;
 
 	GameObject() = default;
 	GameObject(const std::string& name, Shader* shader, Model* model);
