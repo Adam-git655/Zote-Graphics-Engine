@@ -6,29 +6,38 @@ Scene::Scene()
 
 void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera)
 {
-	models.reserve(2);
+	models.reserve(3);
 	meshes.reserve(10);
 
-	////add backpack model
-	//models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
-	//std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
-	//backpackObj->transform.position.x = -2;
-	//objects.push_back(std::move(backpackObj));
+	//add sponza model
+	models.emplace_back(RESOURCES_PATH"objects/sponza/sponza.obj");
+	std::unique_ptr<GameObject> sponzaObj = std::make_unique<GameObject>("sponza", &mainShader, &models.back());
+	sponzaObj->transform.rotation.y = -90;
+	sponzaObj->transform.position.z = -25;
+	objects.push_back(std::move(sponzaObj));
 
-	////add water monke model
-	//models.emplace_back(RESOURCES_PATH"objects/monke/waterMonke.obj");
-	//std::unique_ptr<GameObject> waterMonkeObj = std::make_unique<GameObject>("waterMonke", &mainShader, &models.back());
-	//waterMonkeObj->transform.position.x = 2;
-	//objects.push_back(std::move(waterMonkeObj));
+	//add backpack model
+	models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
+	std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
+	backpackObj->transform.position.x = -2;
+	backpackObj->transform.position.y = 1;
+	objects.push_back(std::move(backpackObj));
+
+	//add water monke model
+	models.emplace_back(RESOURCES_PATH"objects/monke/waterMonke.obj");
+	std::unique_ptr<GameObject> waterMonkeObj = std::make_unique<GameObject>("waterMonke", &mainShader, &models.back());
+	waterMonkeObj->transform.position.x = 2;
+	waterMonkeObj->transform.position.y = 1;
+	objects.push_back(std::move(waterMonkeObj));
 
 	//add ground mesh
-	meshes.emplace_back(Primitives::createQuad());
-	std::unique_ptr<GameObject> groundObj = std::make_unique<GameObject>("ground", &mainShader, &meshes.back());
-	groundObj->transform.position.y = -2;
-	groundObj->transform.scale.x *= 10;
-	groundObj->transform.scale.z *= 10;
-	groundObj->color = glm::vec3(0.5, 0.5, 0.5);
-	objects.push_back(std::move(groundObj));
+	//meshes.emplace_back(Primitives::createQuad());
+	//std::unique_ptr<GameObject> groundObj = std::make_unique<GameObject>("ground", &mainShader, &meshes.back());
+	//groundObj->transform.position.y = -2;
+	//groundObj->transform.scale.x *= 10;
+	//groundObj->transform.scale.z *= 10;
+	//groundObj->color = glm::vec3(0.5, 0.5, 0.5);
+	//objects.push_back(std::move(groundObj));
 
 	//add cube mesh
 	meshes.emplace_back(Primitives::createCube());
@@ -39,11 +48,11 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 
 	//add windows
 	std::vector<glm::vec3> windows;
-	windows.push_back(glm::vec3(-1.5f, -1.4f, -0.48f));
-	windows.push_back(glm::vec3(1.5f, -1.4f, 0.51f));
-	windows.push_back(glm::vec3(0.0f, -1.4f, 0.7f));
-	windows.push_back(glm::vec3(-0.3f, -1.4f, -2.3f));
-	windows.push_back(glm::vec3(0.5f, -1.4f, -0.6f));
+	windows.push_back(glm::vec3(-1.5f, 1.4f, -0.48f - 25.0f));
+	windows.push_back(glm::vec3(1.5f, 1.4f, 0.51f - 25.0f));
+	windows.push_back(glm::vec3(0.0f, 1.4f, 0.7f - 25.0f));
+	windows.push_back(glm::vec3(-0.3f, 1.4f, -2.3f - 25.0f));
+	windows.push_back(glm::vec3(0.5f, 1.4f, -0.6f - 25.0f));
 
 	for (int i = 0; i < windows.size(); ++i)
 	{
