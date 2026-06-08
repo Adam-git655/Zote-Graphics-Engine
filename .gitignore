@@ -5,9 +5,8 @@ build/
 .idea/
 CMakeSettings.json
 Makefile
-assets/
-resources/
+resources/objects/sponza
 *.png
 *.jpg
-*.fbx
 *.obj
+*.mtl
