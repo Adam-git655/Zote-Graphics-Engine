@@ -10,11 +10,11 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	meshes.reserve(10);
 
 	//add sponza model
-	models.emplace_back(RESOURCES_PATH"objects/sponza/sponza.obj");
-	std::unique_ptr<GameObject> sponzaObj = std::make_unique<GameObject>("sponza", &mainShader, &models.back());
-	sponzaObj->transform.rotation.y = -90;
-	sponzaObj->transform.position.z = -25;
-	objects.push_back(std::move(sponzaObj));
+	//models.emplace_back(RESOURCES_PATH"objects/sponza/sponza.obj");
+	//std::unique_ptr<GameObject> sponzaObj = std::make_unique<GameObject>("sponza", &mainShader, &models.back());
+	//sponzaObj->transform.rotation.y = -90;
+	//sponzaObj->transform.position.z = -25;
+	//objects.push_back(std::move(sponzaObj));
 
 	//add backpack model
 	models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
@@ -48,11 +48,11 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 
 	//add windows
 	std::vector<glm::vec3> windows;
-	windows.push_back(glm::vec3(-1.5f, 1.4f, -0.48f - 25.0f));
-	windows.push_back(glm::vec3(1.5f, 1.4f, 0.51f - 25.0f));
-	windows.push_back(glm::vec3(0.0f, 1.4f, 0.7f - 25.0f));
-	windows.push_back(glm::vec3(-0.3f, 1.4f, -2.3f - 25.0f));
-	windows.push_back(glm::vec3(0.5f, 1.4f, -0.6f - 25.0f));
+	windows.push_back(glm::vec3(-1.5f, 1.4f, -0.48f));
+	windows.push_back(glm::vec3(1.5f, 1.4f, 0.51f  ));
+	windows.push_back(glm::vec3(0.0f, 1.4f, 0.7f   ));
+	windows.push_back(glm::vec3(-0.3f, 1.4f, -2.3f ));
+	windows.push_back(glm::vec3(0.5f, 1.4f, -0.6f  ));
 
 	for (int i = 0; i < windows.size(); ++i)
 	{

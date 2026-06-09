@@ -18,6 +18,12 @@
 #include <iostream>
 #include <memory>
 
+struct FrameBufferInfo
+{
+	unsigned int frameBuffer;
+	unsigned int textureColorBuffer;
+};
+
 class Application
 {
 public:
@@ -49,13 +55,18 @@ private:
 	Scene scene;
 	Lighting lighting;
 
+	FrameBufferInfo frameBufferInfo;
+	unsigned int screenQuadVAO;
+
 	//Shaders
 	std::unique_ptr<Shader> mainShader;
 	std::unique_ptr<Shader> lightCubeShader;
+	std::unique_ptr<Shader> screenShader;
 
 	void Init();
 	void Update();
 	void RenderUI();
+	FrameBufferInfo generateFrameBuffer();
 
 	//Input callback functions
 	void processInput(GLFWwindow* window);
