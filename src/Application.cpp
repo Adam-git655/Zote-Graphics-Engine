@@ -74,7 +74,8 @@ void Application::Init()
 	//setup imgui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
@@ -116,17 +117,11 @@ void Application::Run()
 		//render scene
 		scene.Draw(camera, projection, lighting);
 
-		//second pass on screen(main window framebuffer)
+		//second pass on screen (default main window framebuffer, render imgui on here)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		//render quad on screen with texture(color attachment) of frame buffer
-		screenShader->use();
-		glBindVertexArray(screenQuadVAO);
 		glDisable(GL_DEPTH_TEST);
-		glBindTexture(GL_TEXTURE_2D, frameBufferInfo.textureColorBuffer);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		//draw ui using imgui
 		RenderUI();
@@ -137,17 +132,74 @@ void Application::Run()
 	}
 }
 
+void Application::SetupDefaultDockLayout(ImGuiID dockID)
+{
+	if (dockLayoutInitialized) return;
+	dockLayoutInitialized = true;
+
+	//clear any existing layout
+	ImGui::DockBuilderRemoveNode(dockID);
+	ImGui::DockBuilderAddNode(dockID, ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::DockBuilderSetNodeSize(dockID, ImGui::GetMainViewport()->Size);
+
+	//split right
+	ImGuiID dockRight;
+	ImGuiID dockViewport;
+	ImGui::DockBuilderSplitNode(dockID, ImGuiDir_Right, 0.2f, &dockRight, &dockViewport);
+
+	//split right into two
+	ImGuiID dockRightUp;
+	ImGuiID dockRightBottom;
+	ImGui::DockBuilderSplitNode(dockRight, ImGuiDir_Down, 0.6f, &dockRightBottom, &dockRightUp);
+
+	//assign windows
+	ImGui::DockBuilderDockWindow("Scene", dockRightUp);
+	ImGui::DockBuilderDockWindow("Viewport", dockViewport);
+	ImGui::DockBuilderDockWindow("Inspector", dockRightBottom);
+
+	ImGui::DockBuilderFinish(dockID);
+}
+
+
 void Application::RenderUI()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("Tools");
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowViewport(viewport->ID);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::Begin("DockSpace", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoBringToFrontOnFocus |
+		ImGuiWindowFlags_NoNavFocus |
+		ImGuiWindowFlags_NoBackground
+	);
+	ImGui::PopStyleVar();
 
+	ImGuiID dockID = ImGui::GetID("MainDockSpace");
+	ImGui::DockSpace(dockID, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::End();
+
+	SetupDefaultDockLayout(dockID);
+
+	ImGui::Begin("Scene");
+	ImGui::End();
+
+	ImGui::Begin("Viewport");
+	ImVec2 size = ImGui::GetContentRegionAvail();
+	ImGui::Image((ImTextureID)(intptr_t)frameBufferInfo.textureColorBuffer, size, ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::End();
+
+	ImGui::Begin("Inspector");
 	ImGui::ColorEdit3("clear color", &clearColor[0]);
 	lighting.SetImGuiLightingParameters();
-
 	ImGui::End();
 
 	ImGui::Render();

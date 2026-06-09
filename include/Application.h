@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include <imgui_internal.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -67,6 +68,9 @@ private:
 	void Update();
 	void RenderUI();
 	FrameBufferInfo generateFrameBuffer();
+
+	bool dockLayoutInitialized = false;
+	void SetupDefaultDockLayout(ImGuiID dockID);
 
 	//Input callback functions
 	void processInput(GLFWwindow* window);
