@@ -46,6 +46,7 @@ private:
 	bool first_mouse = true;
 	bool mouseCaptured = true;
 	bool spacePressedLastFrame = false;
+	bool fPressedLastFrame = false;
 
 	float lastx = 400;
 	float lasty = 300;
@@ -71,6 +72,8 @@ private:
 
 	bool dockLayoutInitialized = false;
 	void SetupDefaultDockLayout(ImGuiID dockID);
+
+	bool viewportFullscreen = false;
 
 	//Input callback functions
 	void processInput(GLFWwindow* window);

@@ -167,6 +167,7 @@ void Application::RenderUI()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	//make transparent background "viewport" covering whole window as a base
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
@@ -183,23 +184,46 @@ void Application::RenderUI()
 	);
 	ImGui::PopStyleVar();
 
+	//create main dockspace where windows will be docked on top of transparent window
 	ImGuiID dockID = ImGui::GetID("MainDockSpace");
 	ImGui::DockSpace(dockID, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGui::End();
 
 	SetupDefaultDockLayout(dockID);
 
-	ImGui::Begin("Scene");
-	ImGui::End();
+	//if not full screen render scene and inspector
+	if (!viewportFullscreen)
+	{
+		ImGui::Begin("Scene");
+		ImGui::End();
 
-	ImGui::Begin("Viewport");
+		ImGui::Begin("Inspector");
+		ImGui::ColorEdit3("clear color", &clearColor[0]);
+		lighting.SetImGuiLightingParameters();
+		ImGui::End();
+	}
+
+	//always render viewport
+	if (viewportFullscreen)
+	{
+		ImGuiViewport* vp = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(vp->Pos);
+		ImGui::SetNextWindowSize(vp->Size);
+		ImGui::SetNextWindowViewport(vp->ID);
+		ImGui::Begin("Viewport", nullptr,
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoDocking
+		);
+	}
+	else
+	{
+		ImGui::Begin("Viewport");
+	}
+
 	ImVec2 size = ImGui::GetContentRegionAvail();
 	ImGui::Image((ImTextureID)(intptr_t)frameBufferInfo.textureColorBuffer, size, ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::End();
-
-	ImGui::Begin("Inspector");
-	ImGui::ColorEdit3("clear color", &clearColor[0]);
-	lighting.SetImGuiLightingParameters();
 	ImGui::End();
 
 	ImGui::Render();
@@ -245,6 +269,14 @@ void Application::processInput(GLFWwindow* window)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS && !fPressedLastFrame)
+	{
+		viewportFullscreen = !viewportFullscreen;
+		if (!viewportFullscreen)
+			dockLayoutInitialized = false;
+	}
+	fPressedLastFrame = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;
 }
 
 FrameBufferInfo Application::generateFrameBuffer()
