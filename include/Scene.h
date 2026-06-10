@@ -11,7 +11,7 @@ class Scene
 public:
 	Scene();
 	void Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera);
-	void Draw(Camera& camera, glm::mat4 projection, Lighting& lighting);
+	void Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shader& mainShader);
 	const std::vector<std::unique_ptr<GameObject>>& getCurrentGameObjects();
 	GameObject* selectedObject = nullptr;
 private:

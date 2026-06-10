@@ -1,5 +1,11 @@
 #include "GameObject.h"
 
+GameObject::GameObject(const std::string& name)
+	:name(name)
+{
+
+}
+
 GameObject::GameObject(const std::string& name, Shader* shader, Model* model)
 	:name(name), shader(shader), model(model)
 {

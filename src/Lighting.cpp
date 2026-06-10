@@ -29,7 +29,6 @@ void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, 
 	{
 		std::string index = std::to_string(i);
 
-		mainShader.setVec3("pointLights[" + index + "].position", pointLightPositions[i]);
 		mainShader.setFloat("pointLights[" + index + "].constant", 1.0f);
 		mainShader.setFloat("pointLights[" + index + "].linear", 0.09f);
 		mainShader.setFloat("pointLights[" + index + "].quadratic", 0.032f);
@@ -65,45 +64,36 @@ void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, 
 	}
 }
 
-void Lighting::SetImGuiLightingParameters()
+void Lighting::SetImGuiLightingParametersDirectional()
 {
-	if (ImGui::CollapsingHeader("Directional Light"))
-	{
-		ImGui::Checkbox("active", &dirLightActive);
-		ImGui::DragFloat3("direction", &dirLightDirection[0], 0.1f);
-		ImGui::ColorEdit3("ambient", &dirLightambient[0]);
-		ImGui::ColorEdit3("diffuse", &dirLightdiffuse[0]);
-		ImGui::ColorEdit3("specualar", &dirLightspecular[0]);
-	}
+	ImGui::Checkbox("active", &dirLightActive);
+	ImGui::DragFloat3("direction", &dirLightDirection[0], 0.1f);
+	ImGui::ColorEdit3("ambient", &dirLightambient[0]);
+	ImGui::ColorEdit3("diffuse", &dirLightdiffuse[0]);
+	ImGui::ColorEdit3("specualar", &dirLightspecular[0]);
+}
 
-	for (int i = 0; i < NR_POINT_LIGHTS; i++)
-	{
-		std::string name = "Point Light" + std::to_string(i);
-		if (ImGui::CollapsingHeader(name.c_str()))
-		{
-			std::string activeId = "active##" + std::to_string(i);
-			std::string cubeColorId = "cube color##" + std::to_string(i);
-			std::string positionId = "position##" + std::to_string(i);
-			std::string ambientId = "ambient##" + std::to_string(i);
-			std::string diffuseId = "diffuse##" + std::to_string(i);
-			std::string specularId = "specular##" + std::to_string(i);
+void Lighting::SetImGuiLightingParametersPoint(int lightIndex)
+{
+	std::string activeId = "active##" + std::to_string(lightIndex);
+	std::string cubeColorId = "cube color##" + std::to_string(lightIndex);
+	std::string positionId = "position##" + std::to_string(lightIndex);
+	std::string ambientId = "ambient##" + std::to_string(lightIndex);
+	std::string diffuseId = "diffuse##" + std::to_string(lightIndex);
+	std::string specularId = "specular##" + std::to_string(lightIndex);
 
-			ImGui::Checkbox(activeId.c_str(), &pointLightsActive[i]);
-			ImGui::ColorEdit3(cubeColorId.c_str(), &pointLightSourceCubeColors[i][0]);
-			ImGui::DragFloat3(positionId.c_str(), &pointLightPositions[i][0], 0.1f);
-			ImGui::ColorEdit3(ambientId.c_str(), &pointLightAmbients[i][0]);
-			ImGui::ColorEdit3(diffuseId.c_str(), &pointLightDiffuses[i][0]);
-			ImGui::ColorEdit3(specularId.c_str(), &pointLightSpeculars[i][0]);
-		}
-	}
+	ImGui::Checkbox(activeId.c_str(), &pointLightsActive[lightIndex - 1]);
+	ImGui::ColorEdit3(ambientId.c_str(), &pointLightAmbients[lightIndex - 1][0]);
+	ImGui::ColorEdit3(diffuseId.c_str(), &pointLightDiffuses[lightIndex - 1][0]);
+	ImGui::ColorEdit3(specularId.c_str(), &pointLightSpeculars[lightIndex - 1][0]);
+}
 
-	if (ImGui::CollapsingHeader("Spot Light (Flashlight)"))
-	{
-		ImGui::Checkbox("active##spot", &spotLightActive);
-		ImGui::SliderFloat("inner radius##spot", &spotLightInnerCutoff, spotLightOuterCutoff, 1.0f);
-		ImGui::SliderFloat("outer radius##spot", &spotLightOuterCutoff, 0.0f, spotLightInnerCutoff);
-		ImGui::ColorEdit3("ambient##spot", &spotLightAmbient[0]);
-		ImGui::ColorEdit3("diffuse##spot", &spotLightDiffuse[0]);
-		ImGui::ColorEdit3("specular##spot", &spotLightSpecular[0]);
-	}
+void Lighting::SetImGuiLightingParametersSpot()
+{
+	ImGui::Checkbox("active##spot", &spotLightActive);
+	ImGui::SliderFloat("inner radius##spot", &spotLightInnerCutoff, spotLightOuterCutoff, 1.0f);
+	ImGui::SliderFloat("outer radius##spot", &spotLightOuterCutoff, 0.0f, spotLightInnerCutoff);
+	ImGui::ColorEdit3("ambient##spot", &spotLightAmbient[0]);
+	ImGui::ColorEdit3("diffuse##spot", &spotLightDiffuse[0]);
+	ImGui::ColorEdit3("specular##spot", &spotLightSpecular[0]);
 }

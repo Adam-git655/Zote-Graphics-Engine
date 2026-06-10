@@ -115,7 +115,7 @@ void Application::Run()
 		glEnable(GL_DEPTH_TEST);
 
 		//render scene
-		scene.Draw(camera, projection, lighting);
+		scene.Draw(camera, projection, lighting, *mainShader);
 
 		//second pass on screen (default main window framebuffer, render imgui on here)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -210,7 +210,46 @@ void Application::RenderUI()
 
 		ImGui::Begin("Inspector");
 		ImGui::ColorEdit3("clear color", &clearColor[0]);
-		lighting.SetImGuiLightingParameters();
+
+		if (scene.selectedObject)
+		{
+			std::string objectName = scene.selectedObject->name;
+
+			ImGui::Text(objectName.c_str());
+			ImGui::Separator();
+
+			//properties of light objects
+			if (scene.selectedObject->tag == "directional_light")
+			{
+				lighting.SetImGuiLightingParametersDirectional();
+			}
+
+			else if (scene.selectedObject->tag == "point_light")
+			{
+				GeneralPropertiesUI(); //show general properties like transform data for point light as well
+				ImGui::Separator();
+
+				int lightIndex = objectName[objectName.size() - 1] - '0';
+				lighting.SetImGuiLightingParametersPoint(lightIndex);
+			}
+
+			else if (scene.selectedObject->tag == "spot_light")
+			{
+				lighting.SetImGuiLightingParametersSpot();
+			}
+
+			//properties of all other objects
+			else
+			{
+				GeneralPropertiesUI();
+			}
+		}
+		else
+		{
+			ImGui::Text("No object selected");
+		}
+
+		//lighting.SetImGuiLightingParameters();
 		ImGui::End();
 	}
 
@@ -239,6 +278,15 @@ void Application::RenderUI()
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Application::GeneralPropertiesUI()
+{
+	ImGui::DragFloat3("Position", &scene.selectedObject->transform.position[0], 0.1f);
+	ImGui::DragFloat3("Rotation", &scene.selectedObject->transform.rotation[0], 0.1f);
+	ImGui::DragFloat3("Scale", &scene.selectedObject->transform.scale[0], 0.1f);
+	ImGui::Separator();
+	ImGui::ColorEdit3("Color", &scene.selectedObject->color[0]);
 }
 
 void Application::processInput(GLFWwindow* window)

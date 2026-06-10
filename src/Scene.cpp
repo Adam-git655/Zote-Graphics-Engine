@@ -64,6 +64,11 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 		objects.push_back(std::move(windowObj));
 	}
 
+	//add directional light (empty game object)
+	std::unique_ptr<GameObject> directionalLightObj = std::make_unique<GameObject>("directional_light");
+	directionalLightObj->tag = "directional_light";
+	objects.push_back(std::move(directionalLightObj));
+
 	//add light cubes
 	for (int i = 0; i < lighting.NR_POINT_LIGHTS; ++i)
 	{
@@ -76,9 +81,14 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 
 		objects.push_back(std::move(lightObj));
 	}
+
+	//add spot light (empty game object)
+	std::unique_ptr<GameObject> spotLightObj = std::make_unique<GameObject>("spot_light");
+	spotLightObj->tag = "spot_light";
+	objects.push_back(std::move(spotLightObj));
 }
 
-void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
+void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shader& mainShader)
 {
 	//update light cube properties
 	int lightIndex = 0;
@@ -86,8 +96,7 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 	{
 		if (obj->tag == "point_light")
 		{
-			obj->transform.position = lighting.pointLightPositions[lightIndex];
-			obj->color = lighting.pointLightSourceCubeColors[lightIndex];
+			mainShader.setVec3("pointLights[" + std::to_string(lightIndex) + "].position", obj->transform.position);  //update position to the main shader for lighting calculations
 			obj->active = lighting.pointLightsActive[lightIndex];
 			lightIndex++;
 		}
@@ -96,7 +105,7 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 	//render opaque objects
 	for (auto& obj : objects)
 	{
-		if (!obj->active || obj->transparent)
+		if (!obj->active || obj->transparent || !obj->shader)
 			continue;
 
 		obj->shader->use();
@@ -118,7 +127,7 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 
 	for (auto& obj : objects)
 	{
-		if (!obj->active || !obj->transparent)
+		if (!obj->active || !obj->transparent || !obj->shader)
 			continue;
 
 		float dist = glm::length(camera.Position - obj->transform.position);

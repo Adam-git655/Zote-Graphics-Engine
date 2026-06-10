@@ -29,6 +29,7 @@ public:
 	bool transparent = false;
 
 	GameObject() = default;
+	GameObject(const std::string& name);
 	GameObject(const std::string& name, Shader* shader, Model* model);
 	GameObject(const std::string& name, Shader* shader, Mesh* primitive);
 

@@ -13,21 +13,15 @@ class Lighting
 public:
 	Lighting();
 	void SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, Camera& camera);
-	void SetImGuiLightingParameters();
+	void SetImGuiLightingParametersDirectional();
+	void SetImGuiLightingParametersPoint(int lightIndex);
+	void SetImGuiLightingParametersSpot();
 
 	static constexpr int NR_POINT_LIGHTS = 2;
 
 	std::array<bool, NR_POINT_LIGHTS> pointLightsActive = {
 		true,
 		true
-	};
-	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightPositions = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -1.4f, -4.0f)
-	};
-	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightSourceCubeColors = {
-		glm::vec3(1.0f, 1.0f, 1.0f),
-		glm::vec3(1.0f, 1.0f, 1.0f)
 	};
 
 private:

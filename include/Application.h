@@ -68,6 +68,7 @@ private:
 	void Init();
 	void Update();
 	void RenderUI();
+	void GeneralPropertiesUI();
 	FrameBufferInfo generateFrameBuffer();
 
 	bool dockLayoutInitialized = false;
