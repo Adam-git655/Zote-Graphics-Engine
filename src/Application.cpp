@@ -195,6 +195,17 @@ void Application::RenderUI()
 	if (!viewportFullscreen)
 	{
 		ImGui::Begin("Scene");
+
+		for (auto& obj : scene.getCurrentGameObjects())
+		{
+			bool selected = false;
+			if (scene.selectedObject == obj.get())
+				selected = true;
+
+			if (ImGui::Selectable(obj->name.c_str(), selected))
+				scene.selectedObject = obj.get();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Inspector");

@@ -12,7 +12,8 @@ public:
 	Scene();
 	void Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera);
 	void Draw(Camera& camera, glm::mat4 projection, Lighting& lighting);
-
+	const std::vector<std::unique_ptr<GameObject>>& getCurrentGameObjects();
+	GameObject* selectedObject = nullptr;
 private:
 	std::vector<std::unique_ptr<GameObject>> objects;
 	std::vector<Model> models;

@@ -57,7 +57,7 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	for (int i = 0; i < windows.size(); ++i)
 	{
 		meshes.emplace_back(Primitives::createQuad(RESOURCES_PATH "textures/transparent_window.png"));
-		std::unique_ptr<GameObject> windowObj = std::make_unique<GameObject>("window", &mainShader, &meshes.back());
+		std::unique_ptr<GameObject> windowObj = std::make_unique<GameObject>("window" + std::to_string(i + 1), &mainShader, &meshes.back());
 		windowObj->transform.position = windows[i];
 		windowObj->transform.rotation.x = -90;
 		windowObj->transparent = true;
@@ -138,4 +138,9 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting)
 		it->second->Draw();
 	}
 	glEnable(GL_CULL_FACE);
+}
+
+const std::vector<std::unique_ptr<GameObject>>& Scene::getCurrentGameObjects()
+{
+	return objects;
 }
