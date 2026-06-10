@@ -134,8 +134,8 @@ void Application::Run()
 
 void Application::SetupDefaultDockLayout(ImGuiID dockID)
 {
-	if (dockLayoutInitialized) return;
-	dockLayoutInitialized = true;
+	if (defaultDockLayoutInitialized) return;
+	defaultDockLayoutInitialized = true;
 
 	//clear any existing layout
 	ImGui::DockBuilderRemoveNode(dockID);
@@ -331,9 +331,19 @@ void Application::processInput(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS && !fPressedLastFrame)
 	{
-		viewportFullscreen = !viewportFullscreen;
 		if (!viewportFullscreen)
-			dockLayoutInitialized = false;
+		{
+			savedDockLayout = ImGui::SaveIniSettingsToMemory();
+		}
+		else
+		{
+			if (!savedDockLayout.empty())
+				ImGui::LoadIniSettingsFromMemory(savedDockLayout.c_str(), savedDockLayout.size());
+			else
+				defaultDockLayoutInitialized = false;
+		}
+
+		viewportFullscreen = !viewportFullscreen;
 	}
 	fPressedLastFrame = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;
 }

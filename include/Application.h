@@ -71,9 +71,9 @@ private:
 	void GeneralPropertiesUI();
 	FrameBufferInfo generateFrameBuffer();
 
-	bool dockLayoutInitialized = false;
+	bool defaultDockLayoutInitialized = false;
 	void SetupDefaultDockLayout(ImGuiID dockID);
-
+	std::string savedDockLayout;
 	bool viewportFullscreen = false;
 
 	//Input callback functions
