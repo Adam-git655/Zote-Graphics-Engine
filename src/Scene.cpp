@@ -117,7 +117,13 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shade
 		glm::mat4 view = camera.GetViewMatrix();
 		obj->shader->setMat4("view", view);
 
+		if (obj->tag == "point_light")
+			glDisable(GL_CULL_FACE);
+
 		obj->Draw();
+
+		if (obj->tag == "point_light")
+			glEnable(GL_CULL_FACE);
 	}
 
 	//render transparent objects
