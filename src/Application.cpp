@@ -80,6 +80,8 @@ void Application::Init()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
+	ImGuizmo::SetOrthographic(false);
+
 	//setup scene
 	scene.Setup(*mainShader, *lightCubeShader, lighting, camera);
 }
@@ -104,8 +106,7 @@ void Application::Run()
 		lighting.SetShaderParameters(*mainShader, *lightCubeShader, camera);
 		
 		//calculate projection matrix
-		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(camera.Zoom), (float)windowWidth / (float)windowHeight,
+		projection = glm::perspective(glm::radians(camera.Zoom), (float)viewportWidth / (float)viewportHeight,
 			0.1f, 100.0f);
 		
 		//first pass on offscreen framebuffer
@@ -166,6 +167,7 @@ void Application::RenderUI()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	//make transparent background "viewport" covering whole window as a base
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -274,6 +276,36 @@ void Application::RenderUI()
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
 	ImGui::Image((ImTextureID)(intptr_t)frameBufferInfo.textureColorBuffer, size, ImVec2(0, 1), ImVec2(1, 0));
+
+	viewportWidth = (float)ImGui::GetWindowWidth();
+	viewportHeight = (float)ImGui::GetWindowHeight();
+
+	//Gizmos
+	if (scene.selectedObject && gizmoEnabled)
+	{
+		ImGuizmo::SetDrawlist();
+
+		ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewportWidth, viewportHeight);
+
+		glm::mat4 cameraView = camera.GetViewMatrix();
+
+		auto& tf = scene.selectedObject->transform;
+		glm::mat4 objectModel = scene.selectedObject->transform.getModelMatrix();
+
+		ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection), currentTransformOperation, ImGuizmo::MODE::LOCAL, glm::value_ptr(objectModel));
+	
+		if (ImGuizmo::IsUsing())
+		{
+			glm::vec3 translation; glm::vec3 rotation; glm::vec3 scale;
+			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(objectModel), glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+
+			glm::vec3 deltaRotation = rotation - tf.rotation;
+			tf.position = translation;
+			tf.rotation += deltaRotation;
+			tf.scale = scale;
+		}
+	}
+
 	ImGui::End();
 
 	ImGui::Render();
@@ -346,6 +378,33 @@ void Application::processInput(GLFWwindow* window)
 		viewportFullscreen = !viewportFullscreen;
 	}
 	fPressedLastFrame = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;
+
+
+	//Imguizmo operation hotkeys
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && !mouseCaptured && !qPressedLastFrame)
+	{
+		gizmoEnabled = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && !mouseCaptured && !wPressedLastFrame)
+	{
+		gizmoEnabled = true;
+		currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && !mouseCaptured && !ePressedLastFrame)
+	{
+		gizmoEnabled = true;
+		currentTransformOperation = ImGuizmo::OPERATION::ROTATE;
+	}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && !mouseCaptured && !rPressedLastFrame)
+	{
+		gizmoEnabled = true;
+		currentTransformOperation = ImGuizmo::OPERATION::SCALE;
+	}
+
+	qPressedLastFrame = glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS;
+	wPressedLastFrame = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+	ePressedLastFrame = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
+	rPressedLastFrame = glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS;
 }
 
 FrameBufferInfo Application::generateFrameBuffer()

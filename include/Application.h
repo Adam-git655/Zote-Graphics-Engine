@@ -39,6 +39,8 @@ private:
 
 	unsigned int windowWidth;
 	unsigned int windowHeight;
+	float viewportWidth;
+	float viewportHeight;
 	const char* appName;
 
 	float deltaTime = 0.0f;
@@ -48,6 +50,10 @@ private:
 	bool mouseCaptured = true;
 	bool spacePressedLastFrame = false;
 	bool fPressedLastFrame = false;
+	bool qPressedLastFrame = false;
+	bool wPressedLastFrame = false;
+	bool ePressedLastFrame = false;
+	bool rPressedLastFrame = false;
 
 	float lastx = 400;
 	float lasty = 300;
@@ -65,6 +71,12 @@ private:
 	std::unique_ptr<Shader> mainShader;
 	std::unique_ptr<Shader> lightCubeShader;
 	std::unique_ptr<Shader> screenShader;
+
+	glm::mat4 projection = glm::mat4(1.0f);
+
+	//ImGuizmo
+	bool gizmoEnabled = true;
+	ImGuizmo::OPERATION currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
 
 	void Init();
 	void Update();
