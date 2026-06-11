@@ -292,7 +292,7 @@ void Application::RenderUI()
 		auto& tf = scene.selectedObject->transform;
 		glm::mat4 objectModel = scene.selectedObject->transform.getModelMatrix();
 
-		ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection), currentTransformOperation, ImGuizmo::MODE::LOCAL, glm::value_ptr(objectModel));
+		ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection), currentTransformOperation, currentGizmoMode, glm::value_ptr(objectModel));
 	
 		if (ImGuizmo::IsUsing())
 		{
@@ -317,6 +317,13 @@ void Application::GeneralPropertiesUI()
 	ImGui::DragFloat3("Position", &scene.selectedObject->transform.position[0], 0.1f);
 	ImGui::DragFloat3("Rotation", &scene.selectedObject->transform.rotation[0], 0.1f);
 	ImGui::DragFloat3("Scale", &scene.selectedObject->transform.scale[0], 0.1f);
+
+	if (ImGui::RadioButton("Local", currentGizmoMode == ImGuizmo::LOCAL))
+		currentGizmoMode = ImGuizmo::LOCAL;
+	ImGui::SameLine();
+	if (ImGui::RadioButton("World", currentGizmoMode == ImGuizmo::WORLD))
+		currentGizmoMode = ImGuizmo::WORLD;
+
 	ImGui::Separator();
 	ImGui::ColorEdit3("Color", &scene.selectedObject->color[0]);
 }

@@ -77,6 +77,7 @@ private:
 	//ImGuizmo
 	bool gizmoEnabled = true;
 	ImGuizmo::OPERATION currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
+	ImGuizmo::MODE currentGizmoMode = ImGuizmo::LOCAL;
 
 	void Init();
 	void Update();
