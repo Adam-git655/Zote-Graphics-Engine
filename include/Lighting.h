@@ -7,6 +7,18 @@
 #include "glm/glm.hpp"
 #include "camera.h"
 #include <array>
+#include <vector>
+
+struct PointLight
+{
+	glm::vec3 ambient = glm::vec3(0.1f);
+	glm::vec3 diffuse = glm::vec3(0.8f);
+	glm::vec3 specular = glm::vec3(1.0f);
+	float constant = 1.0f;
+	float linear = 0.09f;
+	float quadratic = 0.032f;
+	bool active = true;
+};
 
 class Lighting
 {
@@ -17,17 +29,10 @@ public:
 	void SetImGuiLightingParametersPoint(int lightIndex);
 	void SetImGuiLightingParametersSpot();
 
-	static constexpr int NR_POINT_LIGHTS = 2;
+	std::vector<PointLight> pointLights;
 
-	std::array<bool, NR_POINT_LIGHTS> pointLightsActive = {
-		true,
-		true
-	};
-
-	std::array<glm::vec3, NR_POINT_LIGHTS> initialPointLightPositions = {
-		glm::vec3(0.7f,  0.2f,  2.0f),
-		glm::vec3(2.3f, -1.4f, -4.0f)
-	};
+	void AddPointLight();
+	void RemovePointLight(int lightIndex);
 
 private:
 	//Dirlight vars
@@ -38,18 +43,7 @@ private:
 	glm::vec3 dirLightspecular = { 0.5f, 0.5f, 0.5f };
 
 	//PointLight vars
-	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightAmbients = {
-		glm::vec3(0.1f, 0.1f, 0.1f),
-		glm::vec3(0.1f, 0.1f, 0.1f)
-	};
-	std::array <glm::vec3, NR_POINT_LIGHTS> pointLightDiffuses = {
-		glm::vec3(0.8f, 0.8f, 0.8f),
-		glm::vec3(0.8f, 0.8f, 0.8f)
-	};
-	std::array<glm::vec3, NR_POINT_LIGHTS> pointLightSpeculars = {
-		glm::vec3(1.0f, 1.0f, 1.0f),
-		glm::vec3(1.0f, 1.0f, 1.0f)
-	};
+	int intialNrPointLights = 1;
 
 	//SpotLight vars
 	bool spotLightActive = true;

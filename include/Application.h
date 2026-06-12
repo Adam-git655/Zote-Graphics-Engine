@@ -85,6 +85,7 @@ private:
 	void RenderUI();
 	void GeneralPropertiesUI();
 	FrameBufferInfo generateFrameBuffer();
+	void DeletePointLightGameObject(GameObject* obj);
 
 	bool defaultDockLayoutInitialized = false;
 	void SetupDefaultDockLayout(ImGuiID dockID);

@@ -66,16 +66,9 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	objects.push_back(std::move(directionalLightObj));
 
 	//add light cubes
-	for (int i = 0; i < lighting.NR_POINT_LIGHTS; ++i)
+	for (int i = 0; i < lighting.pointLights.size(); ++i)
 	{
-		meshes.emplace_back(Primitives::createCubeUnlit());
-		std::unique_ptr<GameObject> lightObj = std::make_unique<GameObject>("point_light" + std::to_string(i + 1), &lightCubeShader, &meshes.back());
-		lightObj->tag = "point_light";
-		lightObj->transform.position = lighting.initialPointLightPositions[i];
-		//set scale of light cubes
-		lightObj->transform.scale = glm::vec3(0.2f);
-
-		objects.push_back(std::move(lightObj));
+		AddPointLightGameObject(lightCubeShader);
 	}
 
 	//add spot light (empty game object)
@@ -84,20 +77,23 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	objects.push_back(std::move(spotLightObj));
 }
 
-void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shader& mainShader)
+void Scene::Update(Lighting& lighting, Shader& mainShader)
 {
-	//update light cube properties
+	//update point light properties
 	int lightIndex = 0;
 	for (auto& obj : objects)
 	{
 		if (obj->tag == "point_light")
 		{
 			mainShader.setVec3("pointLights[" + std::to_string(lightIndex) + "].position", obj->transform.position);  //update position to the main shader for lighting calculations
-			obj->active = lighting.pointLightsActive[lightIndex];
+			obj->active = lighting.pointLights[lightIndex].active;
 			lightIndex++;
 		}
 	}
+}
 
+void Scene::Draw(Camera& camera, glm::mat4 projection)
+{
 	//render opaque objects
 	for (auto& obj : objects)
 	{
@@ -190,6 +186,23 @@ GameObject* Scene::AddPlane(Shader& mainShader)
 	return objects.back().get();
 }
 
+GameObject* Scene::AddPointLightGameObject(Shader& lightCubeShader)
+{
+	int pointLightIndex = 0;
+	for (auto& obj : objects)
+	{
+		if (obj->tag == "point_light")
+			pointLightIndex += 1;
+	}
+
+	meshes.emplace_back(Primitives::createCubeUnlit());
+	std::unique_ptr<GameObject> lightObj = std::make_unique<GameObject>("point_light" + (pointLightIndex != 0 ? std::to_string(pointLightIndex) : ""), &lightCubeShader, &meshes.back());
+	lightObj->tag = "point_light";
+	lightObj->transform.scale = glm::vec3(0.2f);
+	objects.push_back(std::move(lightObj));
+	return objects.back().get();
+}
+
 GameObject* Scene::LoadModel(std::string& path)
 {
 	return nullptr;
@@ -208,3 +221,4 @@ void Scene::DeleteGameObject(GameObject* obj)
 	if (it != objects.end())
 		objects.erase(it);
 }
+

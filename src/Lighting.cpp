@@ -2,7 +2,10 @@
 
 Lighting::Lighting()
 {
-
+	for (int i = 0; i < intialNrPointLights; i++)
+	{
+		AddPointLight();
+	}
 }
 
 void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, Camera& camera)
@@ -25,18 +28,20 @@ void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, 
 		mainShader.setVec3("dirLight.specular", 0.0f, 0.0f, 0.0f);
 	}
 
-	for (int i = 0; i < NR_POINT_LIGHTS; i++)
+	mainShader.setInt("nrPointLights", pointLights.size());
+	for (int i = 0; i < pointLights.size(); i++)
 	{
 		std::string index = std::to_string(i);
+		PointLight& pointLight = pointLights[i];
 
-		mainShader.setFloat("pointLights[" + index + "].constant", 1.0f);
-		mainShader.setFloat("pointLights[" + index + "].linear", 0.09f);
-		mainShader.setFloat("pointLights[" + index + "].quadratic", 0.032f);
-		if (pointLightsActive[i])
+		mainShader.setFloat("pointLights[" + index + "].constant", pointLight.constant);
+		mainShader.setFloat("pointLights[" + index + "].linear", pointLight.linear);
+		mainShader.setFloat("pointLights[" + index + "].quadratic", pointLight.quadratic);
+		if (pointLight.active)
 		{
-			mainShader.setVec3("pointLights[" + index + "].ambient", pointLightAmbients[i]);
-			mainShader.setVec3("pointLights[" + index + "].diffuse", pointLightDiffuses[i]);
-			mainShader.setVec3("pointLights[" + index + "].specular", pointLightSpeculars[i]);
+			mainShader.setVec3("pointLights[" + index + "].ambient", pointLight.ambient);
+			mainShader.setVec3("pointLights[" + index + "].diffuse", pointLight.diffuse);
+			mainShader.setVec3("pointLights[" + index + "].specular", pointLight.specular);
 		}
 		else
 		{
@@ -64,6 +69,17 @@ void Lighting::SetShaderParameters(Shader& mainShader, Shader& lightCubeShader, 
 	}
 }
 
+void Lighting::AddPointLight()
+{
+	pointLights.emplace_back(PointLight());
+}
+
+void Lighting::RemovePointLight(int lightIndex)
+{
+	if (lightIndex >= 0 && lightIndex < pointLights.size())
+		pointLights.erase(pointLights.begin() + lightIndex);
+}
+
 void Lighting::SetImGuiLightingParametersDirectional()
 {
 	ImGui::Checkbox("active", &dirLightActive);
@@ -82,10 +98,10 @@ void Lighting::SetImGuiLightingParametersPoint(int lightIndex)
 	std::string diffuseId = "diffuse##" + std::to_string(lightIndex);
 	std::string specularId = "specular##" + std::to_string(lightIndex);
 
-	ImGui::Checkbox(activeId.c_str(), &pointLightsActive[lightIndex - 1]);
-	ImGui::ColorEdit3(ambientId.c_str(), &pointLightAmbients[lightIndex - 1][0]);
-	ImGui::ColorEdit3(diffuseId.c_str(), &pointLightDiffuses[lightIndex - 1][0]);
-	ImGui::ColorEdit3(specularId.c_str(), &pointLightSpeculars[lightIndex - 1][0]);
+	ImGui::Checkbox(activeId.c_str(), &pointLights[lightIndex].active);
+	ImGui::ColorEdit3(ambientId.c_str(), &pointLights[lightIndex].ambient[0]);
+	ImGui::ColorEdit3(diffuseId.c_str(), &pointLights[lightIndex].diffuse[0]);
+	ImGui::ColorEdit3(specularId.c_str(), &pointLights[lightIndex].specular[0]);
 }
 
 void Lighting::SetImGuiLightingParametersSpot()

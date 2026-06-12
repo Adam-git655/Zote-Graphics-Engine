@@ -115,8 +115,11 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 
+		//update scene
+		scene.Update(lighting, *mainShader);
+
 		//render scene
-		scene.Draw(camera, projection, lighting, *mainShader);
+		scene.Draw(camera, projection);
 
 		//second pass on screen (default main window framebuffer, render imgui on here)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -222,6 +225,11 @@ void Application::RenderUI()
 			{
 				scene.AddPlane(*mainShader);
 			}
+			if (ImGui::MenuItem("Add Point Light"))
+			{
+				lighting.AddPointLight();
+				scene.AddPointLightGameObject(*lightCubeShader);
+			}
 			if (ImGui::MenuItem("Load Model"))
 			{
 
@@ -229,6 +237,7 @@ void Application::RenderUI()
 			ImGui::Separator();
 			if (ImGui::MenuItem("Delete GameObject") && scene.selectedObject)
 			{
+				DeletePointLightGameObject(scene.selectedObject);
 				scene.DeleteGameObject(scene.selectedObject);
 			}
 
@@ -258,8 +267,18 @@ void Application::RenderUI()
 				GeneralPropertiesUI(); //show general properties like transform data for point light as well
 				ImGui::Separator();
 
-				int lightIndex = objectName[objectName.size() - 1] - '0';
-				lighting.SetImGuiLightingParametersPoint(lightIndex);
+				int lightIndex = 0;
+				for (auto& obj : scene.getCurrentGameObjects())
+				{
+					if (obj.get() == scene.selectedObject)
+					{
+						lighting.SetImGuiLightingParametersPoint(lightIndex);
+						break;
+					}
+					
+					if (obj->tag == "point_light")
+						lightIndex++;
+				}
 			}
 
 			else if (scene.selectedObject->tag == "spot_light")
@@ -416,6 +435,7 @@ void Application::processInput(GLFWwindow* window)
 	//delete gameobject
 	if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && scene.selectedObject && !delPressedLastFrame)
 	{
+		DeletePointLightGameObject(scene.selectedObject);
 		scene.DeleteGameObject(scene.selectedObject);
 	}
 	delPressedLastFrame = glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS;
@@ -445,6 +465,25 @@ void Application::processInput(GLFWwindow* window)
 	wPressedLastFrame = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
 	ePressedLastFrame = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
 	rPressedLastFrame = glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS;
+}
+
+void Application::DeletePointLightGameObject(GameObject* obj)
+{
+	if (obj->tag != "point_light")
+		return;
+
+	int lightIndex = 0;
+	for (auto& sceneObj : scene.getCurrentGameObjects())
+	{
+		if (sceneObj.get() == obj)
+		{
+			lighting.RemovePointLight(lightIndex);
+			break;
+		}
+
+		if (sceneObj->tag == "point_light")
+			lightIndex++;
+	}
 }
 
 FrameBufferInfo Application::generateFrameBuffer()

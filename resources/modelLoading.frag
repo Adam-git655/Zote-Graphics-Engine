@@ -37,8 +37,8 @@ struct PointLight
 	vec3 diffuse;
 	vec3 specular;
 };
-#define NR_POINT_LIGHTS 2
-uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform int nrPointLights;
+uniform PointLight pointLights[16];
 
 struct SpotLight
 {
@@ -139,7 +139,7 @@ void main()
     
 	vec3 result = CalculateDirLight(dirLight, normal, viewDir, albedo.rgb, specularColor);
 
-	for (int i = 0; i < NR_POINT_LIGHTS; i++)
+	for (int i = 0; i < nrPointLights; i++)
 		result += CalculatePointLight(pointLights[i], normal, FragPos, viewDir, albedo.rgb, specularColor);
 
 	result += CalculateSpotLight(spotLight, normal, FragPos, viewDir, albedo.rgb, specularColor);

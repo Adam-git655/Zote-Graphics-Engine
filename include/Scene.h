@@ -11,12 +11,14 @@ class Scene
 public:
 	Scene();
 	void Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera);
-	void Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shader& mainShader);
+	void Update(Lighting& lighting, Shader& mainShader);
+	void Draw(Camera& camera, glm::mat4 projection);
 	const std::vector<std::unique_ptr<GameObject>>& getCurrentGameObjects();
 	GameObject* selectedObject = nullptr;
 
 	GameObject* AddCube(Shader& mainShader);
 	GameObject* AddPlane(Shader& mainShader);
+	GameObject* AddPointLightGameObject(Shader& lightCubeShader);
 	GameObject* LoadModel(std::string& path);
 	void DeleteGameObject(GameObject* obj);
 private:
