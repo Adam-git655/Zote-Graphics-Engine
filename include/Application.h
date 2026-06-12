@@ -54,6 +54,7 @@ private:
 	bool wPressedLastFrame = false;
 	bool ePressedLastFrame = false;
 	bool rPressedLastFrame = false;
+	bool delPressedLastFrame = false;
 
 	float lastx = 400;
 	float lasty = 300;

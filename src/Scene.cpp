@@ -194,3 +194,17 @@ GameObject* Scene::LoadModel(std::string& path)
 {
 	return nullptr;
 }
+
+void Scene::DeleteGameObject(GameObject* obj)
+{
+	if (!obj)
+		return;
+
+	auto it = std::find_if(objects.begin(), objects.end(),
+		[obj](const std::unique_ptr<GameObject>& p) { return p.get() == obj; });
+
+	selectedObject = nullptr;
+
+	if (it != objects.end())
+		objects.erase(it);
+}

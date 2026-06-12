@@ -18,6 +18,7 @@ public:
 	GameObject* AddCube(Shader& mainShader);
 	GameObject* AddPlane(Shader& mainShader);
 	GameObject* LoadModel(std::string& path);
+	void DeleteGameObject(GameObject* obj);
 private:
 	std::vector<std::unique_ptr<GameObject>> objects;
 	std::vector<Model> models;

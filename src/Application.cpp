@@ -226,6 +226,11 @@ void Application::RenderUI()
 			{
 
 			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Delete GameObject") && scene.selectedObject)
+			{
+				scene.DeleteGameObject(scene.selectedObject);
+			}
 
 			ImGui::EndPopup();
 		}
@@ -408,6 +413,12 @@ void Application::processInput(GLFWwindow* window)
 	}
 	fPressedLastFrame = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;
 
+	//delete gameobject
+	if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && scene.selectedObject && !delPressedLastFrame)
+	{
+		scene.DeleteGameObject(scene.selectedObject);
+	}
+	delPressedLastFrame = glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS;
 
 	//Imguizmo operation hotkeys
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && !mouseCaptured && !qPressedLastFrame)
