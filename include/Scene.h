@@ -14,6 +14,10 @@ public:
 	void Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shader& mainShader);
 	const std::vector<std::unique_ptr<GameObject>>& getCurrentGameObjects();
 	GameObject* selectedObject = nullptr;
+
+	GameObject* AddCube(Shader& mainShader);
+	GameObject* AddPlane(Shader& mainShader);
+	GameObject* LoadModel(std::string& path);
 private:
 	std::vector<std::unique_ptr<GameObject>> objects;
 	std::vector<Model> models;

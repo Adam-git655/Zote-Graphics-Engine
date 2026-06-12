@@ -24,6 +24,11 @@ public:
 		true
 	};
 
+	std::array<glm::vec3, NR_POINT_LIGHTS> initialPointLightPositions = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -1.4f, -4.0f)
+	};
+
 private:
 	//Dirlight vars
 	bool dirLightActive = true;

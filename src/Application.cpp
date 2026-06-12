@@ -208,6 +208,28 @@ void Application::RenderUI()
 				scene.selectedObject = obj.get();
 		}
 
+		//right click anywhere in scene window to add object
+		if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			ImGui::OpenPopup("SceneMenu");
+
+		if (ImGui::BeginPopup("SceneMenu"))
+		{
+			if (ImGui::MenuItem("Add Cube"))
+			{
+				scene.AddCube(*mainShader);
+			}
+			if (ImGui::MenuItem("Add Plane"))
+			{
+				scene.AddPlane(*mainShader);
+			}
+			if (ImGui::MenuItem("Load Model"))
+			{
+
+			}
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Inspector");

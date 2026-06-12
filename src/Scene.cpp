@@ -6,8 +6,8 @@ Scene::Scene()
 
 void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera)
 {
-	models.reserve(3);
-	meshes.reserve(10);
+	models.reserve(10);
+	meshes.reserve(100);
 
 	//add sponza model
 	//models.emplace_back(RESOURCES_PATH"objects/sponza/sponza.obj");
@@ -31,20 +31,16 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	objects.push_back(std::move(waterMonkeObj));
 
 	//add ground mesh
-	//meshes.emplace_back(Primitives::createQuad());
-	//std::unique_ptr<GameObject> groundObj = std::make_unique<GameObject>("ground", &mainShader, &meshes.back());
+	//GameObject* groundObj = AddPlane(mainShader);
 	//groundObj->transform.position.y = -2;
 	//groundObj->transform.scale.x *= 10;
 	//groundObj->transform.scale.z *= 10;
 	//groundObj->color = glm::vec3(0.5, 0.5, 0.5);
-	//objects.push_back(std::move(groundObj));
 
-	//add cube mesh
-	meshes.emplace_back(Primitives::createCube());
-	std::unique_ptr<GameObject> cubeObj = std::make_unique<GameObject>("cube", &mainShader, &meshes.back());
+	//add green cube
+	GameObject* cubeObj = AddCube(mainShader);
 	cubeObj->transform.position = { 1.0, -1.4, 0.0 };
 	cubeObj->color = glm::vec3(0, 1, 0);
-	objects.push_back(std::move(cubeObj));
 
 	//add windows
 	std::vector<glm::vec3> windows;
@@ -75,7 +71,7 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 		meshes.emplace_back(Primitives::createCubeUnlit());
 		std::unique_ptr<GameObject> lightObj = std::make_unique<GameObject>("point_light" + std::to_string(i + 1), &lightCubeShader, &meshes.back());
 		lightObj->tag = "point_light";
-
+		lightObj->transform.position = lighting.initialPointLightPositions[i];
 		//set scale of light cubes
 		lightObj->transform.scale = glm::vec3(0.2f);
 
@@ -158,4 +154,43 @@ void Scene::Draw(Camera& camera, glm::mat4 projection, Lighting& lighting, Shade
 const std::vector<std::unique_ptr<GameObject>>& Scene::getCurrentGameObjects()
 {
 	return objects;
+}
+
+GameObject* Scene::AddCube(Shader& mainShader)
+{
+	int cubeIndex = 0;
+	for (auto& obj : objects)
+	{
+		if (obj->tag == "cube")
+			cubeIndex += 1;
+	}
+
+	meshes.emplace_back(Primitives::createCube());
+	std::unique_ptr<GameObject> cubeObj = std::make_unique<GameObject>("cube" + (cubeIndex != 0 ? std::to_string(cubeIndex) : ""), &mainShader, &meshes.back());
+	cubeObj->transform.position = { 0.0, 0.0, 0.0 };
+	cubeObj->tag = "cube";
+	objects.push_back(std::move(cubeObj));
+	return objects.back().get();
+}
+
+GameObject* Scene::AddPlane(Shader& mainShader)
+{
+	int planeIndex = 0;
+	for (auto& obj : objects)
+	{
+		if (obj->tag == "plane")
+			planeIndex += 1;
+	}
+
+	meshes.emplace_back(Primitives::createQuad());
+	std::unique_ptr<GameObject> planeObj = std::make_unique<GameObject>("plane" + (planeIndex != 0 ? std::to_string(planeIndex) : ""), &mainShader, &meshes.back());
+	planeObj->transform.position = { 0.0, 0.0, 0.0 };
+	planeObj->tag = "plane";
+	objects.push_back(std::move(planeObj));
+	return objects.back().get();
+}
+
+GameObject* Scene::LoadModel(std::string& path)
+{
+	return nullptr;
 }
