@@ -209,6 +209,26 @@ void Application::RenderUI()
 
 			if (ImGui::Selectable(obj->name.c_str(), selected))
 				scene.selectedObject = obj.get();
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				isRenamingObject = true;
+				strncpy(renameBuffer, obj->name.c_str(), sizeof(renameBuffer));
+				scene.selectedObject = obj.get();
+			}
+
+			if (isRenamingObject && scene.selectedObject == obj.get())
+			{
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::InputText("##rename", renameBuffer, sizeof(renameBuffer), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll))
+				{
+					obj->name = renameBuffer;
+					isRenamingObject = false;
+				}
+
+				if (ImGui::IsItemDeactivated())
+					isRenamingObject = false;
+			}
 		}
 
 		//right click anywhere in scene window to add object

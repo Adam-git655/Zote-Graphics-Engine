@@ -81,6 +81,9 @@ private:
 	ImGuizmo::OPERATION currentTransformOperation = ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE currentGizmoMode = ImGuizmo::LOCAL;
 
+	bool isRenamingObject = false;
+	char renameBuffer[128] = {};
+
 	void Init();
 	void Update();
 	void RenderUI();
