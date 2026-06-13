@@ -16,6 +16,7 @@
 #include "model.h"
 #include "Scene.h"
 #include "Lighting.h"
+#include "tinyfiledialogs.h"
 
 #include <iostream>
 #include <memory>

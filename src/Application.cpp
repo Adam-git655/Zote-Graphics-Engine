@@ -232,7 +232,16 @@ void Application::RenderUI()
 			}
 			if (ImGui::MenuItem("Load Model"))
 			{
-
+				const char* filters[] = { "*.obj" };
+				const char* path = tinyfd_openFileDialog("Load Model", RESOURCES_PATH"objects/", 1, filters, "Model files", 0);
+				if (path)
+				{
+					std::string pathString(path);
+					if (pathString.substr(pathString.find_last_of('.')) == ".obj")
+						scene.LoadModel(path, *mainShader);
+					else
+						std::cout << "Only .obj files are supported\n";
+				}
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Delete GameObject") && scene.selectedObject)

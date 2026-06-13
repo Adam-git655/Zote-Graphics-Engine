@@ -203,9 +203,19 @@ GameObject* Scene::AddPointLightGameObject(Shader& lightCubeShader)
 	return objects.back().get();
 }
 
-GameObject* Scene::LoadModel(std::string& path)
+GameObject* Scene::LoadModel(const char* path, Shader& mainShader)
 {
-	return nullptr;
+	int modelIndex = 0;
+	for (auto& obj : objects)
+	{
+		if (obj->model)
+			modelIndex++;
+	}
+
+	models.emplace_back(path);
+	std::unique_ptr<GameObject> modelObj = std::make_unique<GameObject>("model" + (modelIndex != 0 ? std::to_string(modelIndex) : ""), &mainShader, &models.back());
+	objects.push_back(std::move(modelObj));
+	return objects.back().get();
 }
 
 void Scene::DeleteGameObject(GameObject* obj)
