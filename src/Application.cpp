@@ -405,6 +405,10 @@ void Application::GeneralPropertiesUI()
 
 void Application::processInput(GLFWwindow* window)
 {
+	//cant process other input when renaming an object
+	if (isRenamingObject)
+		return;
+
 	if (mouseCaptured)
 	{
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
