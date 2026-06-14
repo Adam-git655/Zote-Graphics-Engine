@@ -128,6 +128,7 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		screenShader->use();
+		SetPostProcessEffect();
 		glBindVertexArray(screenQuadVAO);
 		glDisable(GL_DEPTH_TEST);
 		glBindTexture(GL_TEXTURE_2D, frameBuffer1Info.textureColorBuffer);
@@ -294,6 +295,13 @@ void Application::RenderUI()
 
 			ImGui::Text(objectName.c_str());
 			ImGui::Separator();
+
+			//properties of post process object
+			if (scene.selectedObject->tag == "post_processing")
+			{
+				ImGui::Combo("Post Process", &selectedPostProcessEffect, effects, IM_ARRAYSIZE(effects));
+				ImGui::Separator();
+			}
 
 			//properties of light objects
 			if (scene.selectedObject->tag == "directional_light")
@@ -526,6 +534,26 @@ void Application::DeletePointLightGameObject(GameObject* obj)
 
 		if (sceneObj->tag == "point_light")
 			lightIndex++;
+	}
+}
+
+void Application::SetPostProcessEffect()
+{
+	// reset all first
+	screenShader->setBool("inversion", false);
+	screenShader->setBool("grayscale", false);
+	screenShader->setBool("sharpen", false);
+	screenShader->setBool("blur", false);
+	screenShader->setBool("edgeDetection", false);
+
+	switch (selectedPostProcessEffect)
+	{
+	case 0: break; //none
+	case 1: screenShader->setBool("inversion", true); break;
+	case 2: screenShader->setBool("grayscale", true); break;
+	case 3: screenShader->setBool("sharpen", true); break;
+	case 4: screenShader->setBool("blur", true); break;
+	case 5: screenShader->setBool("edgeDetection", true); break;
 	}
 }
 

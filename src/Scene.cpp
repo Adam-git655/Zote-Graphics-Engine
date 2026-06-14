@@ -75,6 +75,11 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	std::unique_ptr<GameObject> spotLightObj = std::make_unique<GameObject>("spot_light");
 	spotLightObj->tag = "spot_light";
 	objects.push_back(std::move(spotLightObj));
+
+	//add post processing (empty game object)
+	std::unique_ptr<GameObject> postProcessingObj = std::make_unique<GameObject>("post_processing");
+	postProcessingObj->tag = "post_processing";
+	objects.push_back(std::move(postProcessingObj));
 }
 
 void Scene::Update(Lighting& lighting, Shader& mainShader)

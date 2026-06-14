@@ -85,12 +85,16 @@ private:
 	bool isRenamingObject = false;
 	char renameBuffer[128] = {};
 
+	int selectedPostProcessEffect = 0;
+	const char* effects[6] = {"None", "inversion", "grayscale", "sharpen", "blur", "edgeDetection"};
+
 	void Init();
 	void Update();
 	void RenderUI();
 	void GeneralPropertiesUI();
 	FrameBufferInfo generateFrameBuffer();
 	void DeletePointLightGameObject(GameObject* obj);
+	void SetPostProcessEffect();
 
 	bool defaultDockLayoutInitialized = false;
 	void SetupDefaultDockLayout(ImGuiID dockID);
