@@ -66,7 +66,8 @@ private:
 	Scene scene;
 	Lighting lighting;
 
-	FrameBufferInfo frameBufferInfo;
+	FrameBufferInfo frameBuffer1Info;
+	FrameBufferInfo frameBuffer2Info;
 	unsigned int screenQuadVAO;
 
 	//Shaders

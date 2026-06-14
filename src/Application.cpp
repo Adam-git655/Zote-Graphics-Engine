@@ -68,7 +68,8 @@ void Application::Init()
 	glCullFace(GL_BACK);
 	
 	//generate frame buffer info and screen quad to render scene onto
-	frameBufferInfo = generateFrameBuffer();
+	frameBuffer1Info = generateFrameBuffer();
+	frameBuffer2Info = generateFrameBuffer();
 	screenQuadVAO = Primitives::createScreenQuadVAO();
 
 	//setup imgui
@@ -109,8 +110,8 @@ void Application::Run()
 		projection = glm::perspective(glm::radians(camera.Zoom), (float)viewportWidth / (float)viewportHeight,
 			0.1f, 100.0f);
 		
-		//first pass on offscreen framebuffer
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferInfo.frameBuffer);
+		//first pass on offscreen framebuffer 1 (rendering scene onto fbo)
+		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer1Info.frameBuffer);
 		glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
@@ -121,11 +122,20 @@ void Application::Run()
 		//render scene
 		scene.Draw(camera, projection);
 
-		//second pass on screen (default main window framebuffer, render imgui on here)
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//second pass on offscreen framebuffer 2 (render screen quad for the texture with post proccess shader)
+		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer2Info.frameBuffer);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		screenShader->use();
+		glBindVertexArray(screenQuadVAO);
 		glDisable(GL_DEPTH_TEST);
+		glBindTexture(GL_TEXTURE_2D, frameBuffer1Info.textureColorBuffer);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		//third pass on default main window frame buffer (render imgui on here)
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		//draw ui using imgui
 		RenderUI();
@@ -350,7 +360,7 @@ void Application::RenderUI()
 	}
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
-	ImGui::Image((ImTextureID)(intptr_t)frameBufferInfo.textureColorBuffer, size, ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::Image((ImTextureID)(intptr_t)frameBuffer2Info.textureColorBuffer, size, ImVec2(0, 1), ImVec2(1, 0));
 
 	viewportWidth = (float)ImGui::GetWindowWidth();
 	viewportHeight = (float)ImGui::GetWindowHeight();
