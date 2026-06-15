@@ -85,6 +85,7 @@ private:
 	bool isRenamingObject = false;
 	char renameBuffer[128] = {};
 
+	float kernelOffset = 1.0 / 300.0;
 	int selectedPostProcessEffect = 0;
 	const char* effects[6] = {"None", "inversion", "grayscale", "sharpen", "blur", "edgeDetection"};
 

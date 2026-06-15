@@ -214,6 +214,7 @@ void Application::RenderUI()
 
 		for (auto& obj : scene.getCurrentGameObjects())
 		{
+			//handle object selection
 			bool selected = false;
 			if (scene.selectedObject == obj.get())
 				selected = true;
@@ -221,6 +222,7 @@ void Application::RenderUI()
 			if (ImGui::Selectable(obj->name.c_str(), selected))
 				scene.selectedObject = obj.get();
 
+			//object renaming
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				isRenamingObject = true;
@@ -289,6 +291,7 @@ void Application::RenderUI()
 		ImGui::Begin("Inspector");
 		ImGui::ColorEdit3("clear color", &clearColor[0]);
 
+		//show selected object properties
 		if (scene.selectedObject)
 		{
 			std::string objectName = scene.selectedObject->name;
@@ -296,24 +299,27 @@ void Application::RenderUI()
 			ImGui::Text(objectName.c_str());
 			ImGui::Separator();
 
+			//show transform properties of all game objects
+			GeneralPropertiesUI();
+			ImGui::Separator();
+			ImGui::Separator();
+
 			//properties of post process object
 			if (scene.selectedObject->tag == "post_processing")
 			{
+				ImGui::SliderFloat("kernelOffset", &kernelOffset, 0.0f, 0.1f);
 				ImGui::Combo("Post Process", &selectedPostProcessEffect, effects, IM_ARRAYSIZE(effects));
-				ImGui::Separator();
 			}
 
-			//properties of light objects
+			//properties of directional light
 			if (scene.selectedObject->tag == "directional_light")
 			{
 				lighting.SetImGuiLightingParametersDirectional();
 			}
 
-			else if (scene.selectedObject->tag == "point_light")
+			//properties of point lights
+			if (scene.selectedObject->tag == "point_light")
 			{
-				GeneralPropertiesUI(); //show general properties like transform data for point light as well
-				ImGui::Separator();
-
 				int lightIndex = 0;
 				for (auto& obj : scene.getCurrentGameObjects())
 				{
@@ -328,15 +334,10 @@ void Application::RenderUI()
 				}
 			}
 
-			else if (scene.selectedObject->tag == "spot_light")
+			//properties of spot light
+			if (scene.selectedObject->tag == "spot_light")
 			{
 				lighting.SetImGuiLightingParametersSpot();
-			}
-
-			//properties of all other objects
-			else
-			{
-				GeneralPropertiesUI();
 			}
 		}
 		else
@@ -416,8 +417,7 @@ void Application::GeneralPropertiesUI()
 	ImGui::SameLine();
 	if (ImGui::RadioButton("World", currentGizmoMode == ImGuizmo::WORLD))
 		currentGizmoMode = ImGuizmo::WORLD;
-
-	ImGui::Separator();
+	
 	ImGui::ColorEdit3("Color", &scene.selectedObject->color[0]);
 }
 
@@ -539,6 +539,9 @@ void Application::DeletePointLightGameObject(GameObject* obj)
 
 void Application::SetPostProcessEffect()
 {
+	//set kernel offset
+	screenShader->setFloat("kernelOffset", kernelOffset);
+
 	// reset all first
 	screenShader->setBool("inversion", false);
 	screenShader->setBool("grayscale", false);
