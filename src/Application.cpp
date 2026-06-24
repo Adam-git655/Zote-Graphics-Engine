@@ -122,8 +122,14 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 
-		//render skybox first
-		glDepthMask(false);
+		//update scene
+		scene.Update(lighting, *mainShader);
+
+		//render opaque objects in scene
+		scene.DrawOpaque(camera, projection);
+
+		//render skybox
+		glDepthFunc(GL_LEQUAL);
 		glDisable(GL_CULL_FACE);
 
 		skyboxShader->use();
@@ -136,14 +142,11 @@ void Application::Run()
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTex);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-		glDepthMask(true);
+		glDepthFunc(GL_LESS);
 		glEnable(GL_CULL_FACE);
 
-		//update scene
-		scene.Update(lighting, *mainShader);
-
-		//render scene
-		scene.Draw(camera, projection);
+		//render transparent objects in scene at the end (after skybox)
+		scene.DrawTransparent(camera, projection);
 
 		//second pass on offscreen framebuffer 2 (render screen quad for the texture with post proccess shader)
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer2Info.frameBuffer);

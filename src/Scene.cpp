@@ -97,7 +97,7 @@ void Scene::Update(Lighting& lighting, Shader& mainShader)
 	}
 }
 
-void Scene::Draw(Camera& camera, glm::mat4 projection)
+void Scene::DrawOpaque(Camera& camera, glm::mat4 projection)
 {
 	//render opaque objects
 	for (auto& obj : objects)
@@ -122,9 +122,12 @@ void Scene::Draw(Camera& camera, glm::mat4 projection)
 		if (obj->tag == "point_light")
 			glEnable(GL_CULL_FACE);
 	}
+}
 
+void Scene::DrawTransparent(Camera& camera, glm::mat4 projection)
+{
 	//render transparent objects
-	
+
 	//sort first based on distance to camera (near->far in map)
 	std::map<float, GameObject*> sortedWindows;
 
@@ -134,7 +137,7 @@ void Scene::Draw(Camera& camera, glm::mat4 projection)
 			continue;
 
 		float dist = glm::length(camera.Position - obj->transform.position);
-		sortedWindows[dist] = obj.get();		
+		sortedWindows[dist] = obj.get();
 	}
 
 	glDisable(GL_CULL_FACE);

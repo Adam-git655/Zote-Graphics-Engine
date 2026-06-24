@@ -12,7 +12,8 @@ public:
 	Scene();
 	void Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lighting, Camera& camera);
 	void Update(Lighting& lighting, Shader& mainShader);
-	void Draw(Camera& camera, glm::mat4 projection);
+	void DrawOpaque(Camera& camera, glm::mat4 projection);
+	void DrawTransparent(Camera& camera, glm::mat4 projection);
 	const std::vector<std::unique_ptr<GameObject>>& getCurrentGameObjects();
 	GameObject* selectedObject = nullptr;
 
