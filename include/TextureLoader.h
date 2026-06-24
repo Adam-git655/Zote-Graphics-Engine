@@ -14,4 +14,5 @@ struct Texture
 namespace TextureLoader
 {
 	unsigned int TextureFromFile(const char* path, const std::string& directory);
+	unsigned int LoadCubemapTexture(std::vector<std::string> facesTexPaths);
 };

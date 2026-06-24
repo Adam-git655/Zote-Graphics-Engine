@@ -55,6 +55,11 @@ void Application::Init()
 	mainShader = std::make_unique<Shader>(RESOURCES_PATH"modelLoading.vert", RESOURCES_PATH"modelLoading.frag");
 	lightCubeShader = std::make_unique<Shader>(RESOURCES_PATH"LightCubeShader.vert", RESOURCES_PATH"LightCubeShader.frag");
 	screenShader = std::make_unique<Shader>(RESOURCES_PATH"BasicScreenShader.vert", RESOURCES_PATH"BasicScreenShader.frag");
+	skyboxShader = std::make_unique<Shader>(RESOURCES_PATH"SkyboxShader.vert", RESOURCES_PATH"SkyboxShader.frag");
+
+	//load skybox texture and cube (done before texture flipping intentionally)
+	cubemapTex = TextureLoader::LoadCubemapTexture(facesTexPaths);
+	skyboxVAO = Primitives::createCubeUnlitVAO();
 
 	//flip textures
 	stbi_set_flip_vertically_on_load(true);
@@ -112,9 +117,27 @@ void Application::Run()
 		
 		//first pass on offscreen framebuffer 1 (rendering scene onto fbo)
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer1Info.frameBuffer);
+		glViewport(0, 0, windowWidth, windowHeight);
 		glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+
+		//render skybox first
+		glDepthMask(false);
+		glDisable(GL_CULL_FACE);
+
+		skyboxShader->use();
+		skyboxShader->setMat4("projection", projection);  //set projection matrix
+
+		glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		skyboxShader->setMat4("view", view); //set view matrix
+
+		glBindVertexArray(skyboxVAO);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTex);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+		glDepthMask(true);
+		glEnable(GL_CULL_FACE);
 
 		//update scene
 		scene.Update(lighting, *mainShader);
@@ -124,6 +147,7 @@ void Application::Run()
 
 		//second pass on offscreen framebuffer 2 (render screen quad for the texture with post proccess shader)
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer2Info.frameBuffer);
+		glViewport(0, 0, windowWidth, windowHeight);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -136,6 +160,7 @@ void Application::Run()
 
 		//third pass on default main window frame buffer (render imgui on here)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, windowWidth, windowHeight);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//draw ui using imgui
@@ -611,7 +636,9 @@ void Application::setMouseCaptured(GLFWwindow* window, bool captured)
 
 void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height);
+	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+	app->windowWidth = width;
+	app->windowHeight = height;
 }
 
 void Application::mouse_callback(GLFWwindow* window, double xposin, double yposin)

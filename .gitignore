@@ -6,7 +6,3 @@ build/
 CMakeSettings.json
 Makefile
 resources/objects/sponza
-*.png
-*.jpg
-*.obj
-*.mtl

@@ -74,6 +74,7 @@ private:
 	std::unique_ptr<Shader> mainShader;
 	std::unique_ptr<Shader> lightCubeShader;
 	std::unique_ptr<Shader> screenShader;
+	std::unique_ptr<Shader> skyboxShader;
 
 	glm::mat4 projection = glm::mat4(1.0f);
 
@@ -85,9 +86,23 @@ private:
 	bool isRenamingObject = false;
 	char renameBuffer[128] = {};
 
+	//post processing
 	float kernelOffset = 1.0 / 300.0;
 	int selectedPostProcessEffect = 0;
 	const char* effects[6] = {"None", "inversion", "grayscale", "sharpen", "blur", "edgeDetection"};
+
+	//skybox
+	std::vector<std::string> facesTexPaths =
+	{
+		RESOURCES_PATH"skybox/right.jpg",
+		RESOURCES_PATH"skybox/left.jpg",
+		RESOURCES_PATH"skybox/top.jpg",
+		RESOURCES_PATH"skybox/bottom.jpg",
+		RESOURCES_PATH"skybox/front.jpg",
+		RESOURCES_PATH"skybox/back.jpg",
+	};
+	unsigned int cubemapTex;
+	unsigned int skyboxVAO;
 
 	void Init();
 	void Update();

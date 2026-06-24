@@ -8,4 +8,5 @@ namespace Primitives
 	Mesh createQuad(std::string texturePath = "");
 
 	unsigned int createScreenQuadVAO();
+	unsigned int createCubeUnlitVAO();
 }
