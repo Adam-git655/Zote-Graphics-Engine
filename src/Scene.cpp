@@ -9,38 +9,18 @@ void Scene::Setup(Shader& mainShader, Shader& lightCubeShader, Lighting& lightin
 	models.reserve(10);
 	meshes.reserve(100);
 
-	//add sponza model
-	//models.emplace_back(RESOURCES_PATH"objects/sponza/sponza.obj");
-	//std::unique_ptr<GameObject> sponzaObj = std::make_unique<GameObject>("sponza", &mainShader, &models.back());
-	//sponzaObj->transform.rotation.y = -90;
-	//sponzaObj->transform.position.z = -25;
-	//objects.push_back(std::move(sponzaObj));
+	//add japanese town model
+	models.emplace_back(RESOURCES_PATH"objects/japanese_town/town.obj", false);
+	std::unique_ptr<GameObject> japaneseTownObj = std::make_unique<GameObject>("japanese_town", &mainShader, &models.back());
+	japaneseTownObj->transform.scale = glm::vec3(0.05f);
+	objects.push_back(std::move(japaneseTownObj));
 
-	//add backpack model
-	models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
-	std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
-	backpackObj->transform.position.x = -2;
-	backpackObj->transform.position.y = 1;
-	objects.push_back(std::move(backpackObj));
-
-	//add water monke model
-	models.emplace_back(RESOURCES_PATH"objects/monke/waterMonke.obj");
-	std::unique_ptr<GameObject> waterMonkeObj = std::make_unique<GameObject>("waterMonke", &mainShader, &models.back());
-	waterMonkeObj->transform.position.x = 2;
-	waterMonkeObj->transform.position.y = 1;
-	objects.push_back(std::move(waterMonkeObj));
-
-	//add ground mesh
-	//GameObject* groundObj = AddPlane(mainShader);
-	//groundObj->transform.position.y = -2;
-	//groundObj->transform.scale.x *= 10;
-	//groundObj->transform.scale.z *= 10;
-	//groundObj->color = glm::vec3(0.5, 0.5, 0.5);
-
-	//add green cube
-	GameObject* cubeObj = AddCube(mainShader);
-	cubeObj->transform.position = { 1.0, -1.4, 0.0 };
-	cubeObj->color = glm::vec3(0, 1, 0);
+	////add backpack model
+	//models.emplace_back(RESOURCES_PATH"objects/backpack/backpack.obj");
+	//std::unique_ptr<GameObject> backpackObj = std::make_unique<GameObject>("backpack", &mainShader, &models.back());
+	//backpackObj->transform.position.x = -2;
+	//backpackObj->transform.position.y = 3;
+	//objects.push_back(std::move(backpackObj));
 
 	//add windows
 	std::vector<glm::vec3> windows;
