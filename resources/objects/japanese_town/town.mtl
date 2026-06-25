@@ -1,0 +1,101 @@
+# Blender 5.1.2 MTL File: 'None'
+# www.blender.org
+
+newmtl 01___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 01___Default_baseColor.jpeg
+map_Bump -bm 1.000000 01___Default_normal.png
+
+newmtl 07___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 07___Default_baseColor.jpeg
+map_Bump -bm 1.000000 07___Default_normal.png
+
+newmtl 08___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 08___Default_baseColor.jpeg
+map_Bump -bm 1.000000 08___Default_normal.png
+
+newmtl 09___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 09___Default_baseColor.jpeg
+map_Bump -bm 1.000000 09___Default_normal.png
+
+newmtl 13___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 13___Default_baseColor.jpeg
+map_Bump -bm 1.000000 13___Default_normal.png
+
+newmtl 14___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 14___Default_baseColor.jpeg
+map_Bump -bm 1.000000 14___Default_normal.png
+
+newmtl 15___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 15___Default_baseColor.jpeg
+map_Bump -bm 1.000000 15___Default_normal.png
+
+newmtl 19___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 19___Default_baseColor.jpeg
+map_Bump -bm 1.000000 19___Default_normal.png
+
+newmtl 20___Default
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 20___Default_baseColor.jpeg
+map_Bump -bm 1.000000 20___Default_normal.png

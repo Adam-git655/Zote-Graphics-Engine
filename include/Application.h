@@ -104,6 +104,11 @@ private:
 	unsigned int cubemapTex;
 	unsigned int skyboxVAO;
 
+	//dynamic model loading popup
+	bool openModelImportPopup = false;
+	std::string pendingModelPath = "";
+	bool pendingFlipUVs = false;
+
 	void Init();
 	void Update();
 	void RenderUI();

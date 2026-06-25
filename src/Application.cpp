@@ -299,7 +299,11 @@ void Application::RenderUI()
 				{
 					std::string pathString(path);
 					if (pathString.substr(pathString.find_last_of('.')) == ".obj")
-						scene.LoadModel(path, *mainShader);
+					{
+						pendingModelPath = pathString;
+						pendingFlipUVs = true;
+						openModelImportPopup = true;
+					}
 					else
 						std::cout << "Only .obj files are supported\n";
 				}
@@ -315,6 +319,34 @@ void Application::RenderUI()
 		}
 
 		ImGui::End();
+
+		if (openModelImportPopup)
+		{
+			ImGui::OpenPopup("Import Model");
+			openModelImportPopup = false;
+		}
+
+		//import model settings popup
+		if (ImGui::BeginPopupModal("Import Model", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("File: %s", pendingModelPath.c_str());
+			ImGui::Checkbox("Flip UV's", &pendingFlipUVs);
+
+			if (ImGui::Button("Load"))
+			{
+				scene.LoadModel(pendingModelPath.c_str(), *mainShader, pendingFlipUVs);
+				pendingModelPath = "";
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				pendingModelPath = "";
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
 
 		ImGui::Begin("Inspector");
 		ImGui::ColorEdit3("clear color", &clearColor[0]);

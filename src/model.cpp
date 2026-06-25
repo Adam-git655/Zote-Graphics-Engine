@@ -8,16 +8,21 @@ void Model::Draw(Shader& shader)
 	}
 }
 
-void Model::loadModel(const std::string& path)
+void Model::loadModel(const std::string& path, bool flipUVs)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+	unsigned int flags = aiProcess_Triangulate;
+	if (flipUVs)
+		flags |= aiProcess_FlipUVs;
+
+	const aiScene* scene = importer.ReadFile(path, flags);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << "\n";
 		return;
 	}
-	directory = path.substr(0, path.find_last_of("/"));
+	directory = path.substr(0, path.find_last_of("/\\"));
 	processNode(scene->mRootNode, scene);
 }
 

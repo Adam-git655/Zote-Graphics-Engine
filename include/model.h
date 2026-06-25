@@ -22,15 +22,15 @@
 class Model
 {
 public:
-	Model(const char* path)
+	Model(const char* path, bool flipUvs = true)
 	{
-		loadModel(path);
+		loadModel(path, flipUvs);
 	}
 	void Draw(Shader& shader);
 private:
 	std::vector<Mesh> meshes;
 	std::string directory;
-	void loadModel(const std::string& path);
+	void loadModel(const std::string& path, bool flipUVs);
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) const;

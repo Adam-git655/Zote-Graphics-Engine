@@ -211,7 +211,7 @@ GameObject* Scene::AddPointLightGameObject(Shader& lightCubeShader)
 	return objects.back().get();
 }
 
-GameObject* Scene::LoadModel(const char* path, Shader& mainShader)
+GameObject* Scene::LoadModel(const char* path, Shader& mainShader, bool flipUvs)
 {
 	int modelIndex = 0;
 	for (auto& obj : objects)
@@ -220,7 +220,7 @@ GameObject* Scene::LoadModel(const char* path, Shader& mainShader)
 			modelIndex++;
 	}
 
-	models.emplace_back(path);
+	models.emplace_back(path, flipUvs);
 	std::unique_ptr<GameObject> modelObj = std::make_unique<GameObject>("model" + (modelIndex != 0 ? std::to_string(modelIndex) : ""), &mainShader, &models.back());
 	objects.push_back(std::move(modelObj));
 	return objects.back().get();

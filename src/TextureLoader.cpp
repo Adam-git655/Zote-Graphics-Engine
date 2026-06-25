@@ -15,6 +15,7 @@ unsigned int TextureLoader::TextureFromFile(const char* path, const std::string&
 
 	std::string filename = std::string(path);
 	filename = directory + "/" + filename;
+	std::replace(filename.begin(), filename.end(), '\\', '/');
 
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
