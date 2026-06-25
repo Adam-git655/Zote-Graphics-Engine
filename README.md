@@ -69,7 +69,8 @@ Make sure the 'resources/' folder is accessible by the executable (The resource 
 ---
 ## Architectural notes
 - The engine uses a lightweight scene graph approach. The 'Scene' owns a vector of GameObjects, meshes and models. Each GameObject contains a transform, some properties, a non owning pointer to a shader owned by 'Application' and a non owning pointer to a mesh or a model (or none). 
-- All visible game objects are initialized in the scene class itself. Rendering is split into opaque and transparent passes with the skybox drawn in between them. - The viewport is rendered to a framebuffer and post-processed through a second framebuffer before being displayed in the viewport.
+- All visible game objects are initialized in the scene class itself. Rendering is split into opaque and transparent passes with the skybox drawn in between them.
+- The viewport is rendered to a framebuffer and post-processed through a second framebuffer before being displayed in the viewport.
 - A 'Model' reads the model data and converts it into several 'Mesh' objects using assimp.
 - The lighting properties of directional, point and spot lights are managed by a lighting class which syncs the properties between the shader and the inspector.
 - 'Shader' and 'Texture Loader' exist to abstract shader code and texture loading.
